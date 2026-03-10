@@ -5,6 +5,8 @@ import userRouter from "./Routes/UserRoutes.js";
 import session from "express-session";
 import passport from "passport";
 import "./lib/auth.js"
+import cors from "cors"
+import InfoApi from "./Middleware/InfoApi.js";
 dotenv.config();
 const app = express();
 
@@ -12,6 +14,11 @@ connectDB();
 
 // middleware start
 app.use(express.json());
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true,
+    methods:["POST","PUT","GET","DELETE"]
+}))
 app.use(
   session({
     resave: false,
@@ -20,10 +27,13 @@ app.use(
     saveUninitialized: false,
   }),
 );
+app.use(passport.initialize())
+app.use(passport.session())
+
+// custom
+app.use(InfoApi)
+// custom end
 // middleware end
-app.get("/", (req, res) => {
-  res.send("<a href='/auth/google'>Auth</a>");
-});
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
@@ -31,13 +41,8 @@ app.get(
 app.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login?failed=true" }),
-  (req, res) => {
-    res.redirect("/dash");
-  },
 );
-app.get("/dash", (req, res) => {
-  res.send(`hai`);
-});
+
 app.use("/api", userRouter);
 app.listen(process.env.PORT, (req, res) => {
   console.log("APP RUNNING");
