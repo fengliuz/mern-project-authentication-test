@@ -5,11 +5,12 @@ import passport from "passport"
 import session from "express-session"
 import cors from "cors"
 import "./lib/auth.js"
+import userRouters from "./Routes/UserRoutes.js"
 dotenv.config()
 const app = express()
 connectDb()
 // middleware Start
-app.use(session({
+app.use(session({   
     resave:false,saveUninitialized:false,secret:"123",cookie:{secure:false}
 }))
 app.use(passport.initialize())
@@ -22,6 +23,9 @@ app.use(cors({
 app.get("/auth/google",passport.authenticate("google",{scope:["profile","email"]}))
 app.get("/google/callback",passport.authenticate("google",{failureRedirect:"/",successRedirect:"/aa"}))
 app.use(express.json())
+
+// middleware routes
+app.use("/api/auth",userRouters)
 // middleware End
 
 app.listen(process.env.PORT,(req,res)=>{
