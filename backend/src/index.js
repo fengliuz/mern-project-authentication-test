@@ -6,10 +6,12 @@ import session from "express-session"
 import cors from "cors"
 import "./lib/auth.js"
 import userRouters from "./Routes/UserRoutes.js"
+import InfoRoutes from "./Middleware/InfoRoutes.js"
 dotenv.config()
 const app = express()
 connectDb()
 // middleware Start
+app.use(InfoRoutes)
 app.use(session({   
     resave:false,saveUninitialized:false,secret:"123",cookie:{secure:false}
 }))
