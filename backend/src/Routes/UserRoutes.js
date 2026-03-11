@@ -8,3 +8,4 @@ userRouters.use(ProtectedRoutes)
 userRouters.post("/logout",logoutUser)
 
 export default userRouters
+

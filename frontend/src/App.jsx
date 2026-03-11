@@ -1,14 +1,13 @@
-import { Route, Routes } from "react-router"
+
+import {Route, Routes} from "react-router"
 import LoginPage from "./pages/LoginPage"
-
-
 function App() {
   return(
-    <div className="" data-theme="forest">
+    <div className="" data-theme="sunset">
     <Routes>
-      <Route path="/" element={<LoginPage/>}></Route>
+      <Route path="/login" element={<LoginPage/>}/>
     </Routes>
-    </div>
+  </div>
   )
 }
 

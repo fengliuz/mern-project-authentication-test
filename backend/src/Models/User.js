@@ -1,4 +1,5 @@
-import mongoose, { mongo } from "mongoose";
+
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -9,17 +10,19 @@ const userSchema = new mongoose.Schema(
     },
     googleId: {
       type: String,
-      sparse: true,
+
       unique: true,
+      sparse: true,
     },
     email: {
       type: String,
-      required: true,
       trim: true,
+      lowercase: true,
       unique: true,
     },
     password: {
       type: String,
+      minlength: [6, "Password minimal is 6 characters"],
       required: function () {
         return !this.googleId;
       },
@@ -33,5 +36,5 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const User = mongoose.model("User", userSchema);
-export default User;
+
+export const User = mongoose.model("User", userSchema);

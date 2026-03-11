@@ -30,6 +30,41 @@ app.use(express.json())
 app.use("/api/auth",userRouters)
 // middleware End
 
-app.listen(process.env.PORT,(req,res)=>{
-    console.log("APP RUNNING")
-})
+
+connectDB();
+
+// middleware start
+app.use(express.json());
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true,
+    methods:["POST","PUT","GET","DELETE"]
+}))
+app.use(
+  session({
+    resave: false,
+    cookie: { secure: false },
+    secret: "1123",
+    saveUninitialized: false,
+  }),
+);
+app.use(passport.initialize())
+app.use(passport.session())
+
+// custom
+app.use(InfoApi)
+// custom end
+// middleware end
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] }),
+);
+app.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login?failed=true" }),
+);
+
+app.use("/api", userRouter);
+app.listen(process.env.PORT, (req, res) => {
+  console.log("APP RUNNING");
+});
