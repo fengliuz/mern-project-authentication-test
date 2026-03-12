@@ -8,8 +8,9 @@ import { LoaderIcon } from "lucide-react";
 import { useContext } from "react";
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children })=> {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const appName = "WindahouseWare";
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const checkAuth = async () => {
@@ -23,33 +24,33 @@ export const AuthProvider = ({ children })=> {
       setLoading(false);
     }
   };
-  const logout = async()=>{
+  const logout = async () => {
     try {
-        await api.post("/logout")
-        toast.success("Logout Successfully")
-        setUser(null)
-        navigate("/")
+      await api.post("/auth/logout");
+      toast.success("Logout Successfully");
+      setUser(null);
+      navigate("/");
     } catch (error) {
-        toast.error("Failed to logout, Forcing to logout, "+error)
-        setUser(null)
-        navigate("/")
+      toast.error("Failed to logout, Forcing to logout, " + error);
+      setUser(null);
+      navigate("/");
     }
-  }
+  };
   useEffect(() => {
     checkAuth();
-  },[]);
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, checkAuth,logout }}>
+    <AuthContext.Provider value={{ user, setUser, checkAuth, logout, appName }}>
       {loading ? (
         <div className="flex justify-center items-center text-center h-screen">
           Loading... <LoaderIcon className=" animate-spin" />
         </div>
       ) : (
-        { children }
+        children
       )}
     </AuthContext.Provider>
   );
-}
+};
 // eslint-disable-next-line
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);
