@@ -25,7 +25,7 @@ app.use(passport.session()); //session passport
 //for the react / localhost:5173 can access the api
 app.use(
   cors({
-    origin: "http://localhost:5173/",
+    origin: "http://localhost:5173",
     credentials: true,
     methods: ["POST", "GET", "DELETE", "PUT"],
   }),

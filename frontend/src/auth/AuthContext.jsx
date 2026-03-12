@@ -16,10 +16,11 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const res = await api.get("/me");
+      if(!res.data.user)return
       setUser(res.data.user);
     } catch (error) {
       setUser(null);
-      toast.error("Error Server Authorizing User," + error.response.data);
+      console.log("Error Server Authorizing User," + error);
     } finally {
       setLoading(false);
     }
