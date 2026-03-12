@@ -1,14 +1,36 @@
 import { useNavigate } from "react-router";
-
+import toast from "react-hot-toast";
+import api from "../lib/api";
+import { useState } from "react";
+import { useAuth } from "../auth/AuthContext";
 const RegisterPage = () => {
-    const navigate = useNavigate()
-    const handleGoogleLogin = (e)=>{
-        e.preventDefault()
-        window.location.href="http://localhost:5001/auth/google"
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { checkAuth } = useAuth();
+  const handleRegisterManually = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post("/auth/register", {
+        username,
+        email,
+        password,
+      });
+      await checkAuth();
+      toast.success(res.data.message);
+      navigate("/");
+    } catch (error) {
+      toast.error("failed registering " + error.response.data.message)
     }
+  };
+  const handleGoogleRegister = (e) => {
+    e.preventDefault();
+    window.location.href = "http://localhost:5001/auth/google";
+  };
   return (
     <div className="flex justify-center items-center  min-h-full">
-      <form className="w-full">
+      <form className="w-full" onSubmit={handleRegisterManually}>
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
           <div className="w-full bg-secondary/50 rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -24,7 +46,9 @@ const RegisterPage = () => {
                   className="bg-gray-50 border border-gray-300 text-success sm:text-sm rounded-lg block w-full p-2.5"
                   id="username"
                   type="text"
-                ></input>
+                  value={username}
+                  onChange={(e)=>setUsername(e.target.value)}
+                  ></input>
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-success text-shadow-md text-shadow-slate-700">
@@ -35,22 +59,25 @@ const RegisterPage = () => {
                   placeholder="••••••••"
                   id="password"
                   type="password"
-                ></input>
+                  value={password}
+                  onChange={(e)=>setPassword(e.target.value)}
+                  ></input>
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-success text-shadow-md text-shadow-slate-700">
-                  Confirm password
+                  Email
                 </label>
                 <input
                   className="bg-gray-50 border border-gray-300 text-success sm:text-sm rounded-lg block w-full p-2.5"
-                  placeholder="••••••••"
-                  id="confirmPassword"
-                  type="password"
-                ></input>
+                  placeholder="youremail@example.com"
+                  type="email"
+                  value={email}
+                  onChange={(e)=>setEmail(e.target.value)}
+                  ></input>
               </div>
               <div className="divider">OR</div>
               <button
-                onClick={handleGoogleLogin}
+                onClick={handleGoogleRegister}
                 className="btn-outline hover:btn-secondary hover:btn-soft btn btn-primary cursor-pointer "
               >
                 <svg

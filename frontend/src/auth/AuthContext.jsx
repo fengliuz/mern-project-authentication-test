@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import api from "../lib/api";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, LogIn } from "lucide-react";
 import { useContext } from "react";
 const AuthContext = createContext();
 
@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
   const logout = async () => {
     try {
       await api.post("/auth/logout");
