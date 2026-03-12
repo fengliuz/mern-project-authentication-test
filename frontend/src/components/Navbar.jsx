@@ -4,6 +4,7 @@ import { LogOutIcon, PaletteIcon } from "lucide-react";
 
 const Navbar = ({ onSelectedTheme }) => {
   const { appName, user, logout } = useAuth();
+  console.log(user)
   const handleLogout = async (e) => {
     e.preventDefault();
     await logout();

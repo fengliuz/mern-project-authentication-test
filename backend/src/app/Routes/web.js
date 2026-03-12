@@ -13,5 +13,4 @@ userRouters.use(ProtectedRoutes);
 userRouters.post("/logout", logoutUser);
 
 export const defRouters = express.Router()
-defRouters.use(ProtectedRoutes)
 defRouters.get("/me",apiAuthorize)

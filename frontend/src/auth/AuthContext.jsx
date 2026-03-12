@@ -16,8 +16,8 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const res = await api.get("/me");
-      if(!res.data.user)return
-      setUser(res.data.user);
+      if(!res.data.data)return
+      setUser(res.data.data);
     } catch (error) {
       setUser(null);
       console.log("Error Server Authorizing User," + error);

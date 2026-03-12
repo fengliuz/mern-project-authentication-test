@@ -4,6 +4,8 @@ import RegisterPage from "./pages/RegisterPage";
 import MainLayout from "./layouts/MainLayout";
 import { AuthProvider } from "./auth/AuthContext";
 import { useEffect, useState } from "react";
+import HomePage from "./pages/HomePage";
+import ProtectedRoutes from "./auth/ProtectedRoutes";
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme"));
 
@@ -24,9 +26,17 @@ function App() {
     <div className="transition duration-200" data-theme={`${theme}`}>
       <AuthProvider>
         <Routes>
-          <Route element={<MainLayout onSelectedTheme={handleSelectedTheme} />} >
+          <Route element={<MainLayout onSelectedTheme={handleSelectedTheme} />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoutes>
+                  <HomePage/>
+                </ProtectedRoutes>
+              }
+            />
           </Route>
         </Routes>
       </AuthProvider>
