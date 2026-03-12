@@ -3,6 +3,9 @@ import User from "../Models/User.js";
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    if(password.length < 6){
+      return res.status(400).json({message:"Password minimal length is 6 characters"})
+    }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = await User.create({
