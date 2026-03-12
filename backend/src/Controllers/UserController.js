@@ -74,9 +74,9 @@ export const logoutUser = async (req, res) => {
             if(error){
                return  res.status(500).json({ message: "Server internal error failed to logout" });
             } 
-        })
-        res.clearCookie("connect.sid")
-        res.status(200).json({message:"Logout Successfully"})
+            res.clearCookie("connect.sid")
+            res.status(200).json({message:"Logout Successfully"})
+          })
     })
   } catch (error) {
     res
