@@ -4,7 +4,7 @@ const transactionSchema = new mongoose.Schema({
     type:{
         type:String,
         required:true,
-        enum:["IN","OUT","ADJUSMENT"]
+        enum:["IN","OUT","ADJUSTMENT"]
     },
     product:{
         type:mongoose.Schema.Types.ObjectId,
@@ -23,5 +23,5 @@ const transactionSchema = new mongoose.Schema({
         required:true
     }
 },{timestamps:true})
-const Transaction = mongoose.model("Transaction",categorySchema)
+const Transaction = mongoose.model("Transaction",transactionSchema)
 export default Transaction
