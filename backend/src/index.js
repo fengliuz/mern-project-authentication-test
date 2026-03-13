@@ -6,7 +6,7 @@ import session from "express-session";
 import cors from "cors";
 import InfoRoutes from "./app/Middleware/InfoRoutes.js";
 import "./lib/auth.js";
-import { defRouters, userRouters } from "./app/Routes/web.js";
+import { categoryRoutes, defRouters, productRoutes, transactionRoutes, userRouters } from "./app/Routes/web.js";
 dotenv.config();
 // app initialization start
 const app = express();
@@ -44,7 +44,10 @@ app.get(
   }),
 );
 
-app.use("/api/auth", userRouters); //userRouting
+app.use("/api/auth", userRouters); 
+app.use("/api/product", productRoutes); 
+app.use("/api/category", categoryRoutes); 
+app.use("/api/transaction", transactionRoutes); 
 app.use("/api", defRouters); //defRouting
 
 // middleware End
