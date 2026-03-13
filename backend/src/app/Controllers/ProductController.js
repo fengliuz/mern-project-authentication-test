@@ -1,6 +1,6 @@
 import Product from "../Models/Product";
 
-export const createCategory = async (req, res) => {
+export const createProduct = async (req, res) => {
   try {
     const { sku, name, description, price, stock, minStock, unit, categoryId } =
       req.body;
@@ -8,8 +8,11 @@ export const createCategory = async (req, res) => {
     if (existingProduct) {
       return res.status(400).json({ message: "SKU Already Exists" });
     }
-
-    const newProduct = await Product.crate({
+    const categoryExists = await Category.findById(categoryId);
+    if (!categoryExists) {
+      return res.status(404).json({ message: "Category not found!" });
+    }
+    const newProduct = await Product.create({
       sku,
       name,
       description,
@@ -22,7 +25,7 @@ export const createCategory = async (req, res) => {
     });
     res.status(201).json({
       message: "A new Product created successfully",
-      data: newCategory,
+      data: newProduct,
     });
   } catch (error) {
     res
@@ -32,7 +35,9 @@ export const createCategory = async (req, res) => {
 };
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Category.find().populate("category","name").populate("createdBy","username");
+    const products = await Product.find()
+      .populate("category", "name")
+      .populate("createdBy", "username");
     res.status(200).json({
       message: "Success retrieved all data from products",
       data: { products },
@@ -44,4 +49,4 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
-s
+s;
