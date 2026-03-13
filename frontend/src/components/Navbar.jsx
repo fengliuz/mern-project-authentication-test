@@ -4,7 +4,7 @@ import { LogOutIcon, PaletteIcon } from "lucide-react";
 
 const Navbar = ({ onSelectedTheme }) => {
   const { appName, user, logout } = useAuth();
-  console.log(user)
+  console.log(user);
   const handleLogout = async (e) => {
     e.preventDefault();
     await logout();
@@ -23,12 +23,18 @@ const Navbar = ({ onSelectedTheme }) => {
       <div className="flex justify-between items-center px-0 md:px-5 lg:px-9 w-full text-primary font-bold  text-shadow-slate-900 text-shadow-sm">
         <p className="text-md lg:text-2xl ">{appName}</p>
         {user ? (
-          <div className="flex">
+          <div className="flex gap-5 justify-center items-center">
             <Link>{user.username}</Link>
             <Link>
-              <img src={user.avatar} alt="User Profile" />
+              <img
+                src={`${user?.avatar || "https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"}`}
+                className=" size-10 rounded-full border-secondary border-2"
+              />
             </Link>
-            <button onClick={handleLogout}>
+            <button
+              className=" text-red-500  lg:btn lg:btn-outline lg:bg-base-100/40"
+              onClick={handleLogout}
+            >
               Logout <LogOutIcon></LogOutIcon>
             </button>
           </div>
@@ -48,7 +54,10 @@ const Navbar = ({ onSelectedTheme }) => {
             </Link>
             <div className="dropdown dropdown-end ">
               <div tabIndex={0} role="button" className="btn m-0 lg:m-auto">
-                <p className=" hidden lg:block">{localStorage.getItem("theme")}</p><PaletteIcon />
+                <p className=" hidden lg:block">
+                  {localStorage.getItem("theme")}
+                </p>
+                <PaletteIcon />
               </div>
               <ul
                 tabIndex="-1"
