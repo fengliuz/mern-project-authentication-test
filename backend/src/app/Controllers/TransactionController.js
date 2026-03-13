@@ -53,3 +53,16 @@ export const createTransaction = async(req,res)=>{
     res.status(500).json({ message: "Gagal transaksi", error: error.message });
   }
 }
+
+export const getTransactionHistory = async (req, res) => {
+  try {
+    const history = await Transaction.find()
+      .populate("product", "name sku") // Ambil nama dan SKU produk
+      .populate("operator", "username") // Ambil nama operator
+      .sort({ createdAt: -1 }); // Urutkan dari yang terbaru
+
+    res.status(200).json({ data: history });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
