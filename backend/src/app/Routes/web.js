@@ -9,14 +9,18 @@ import { apiAuthorize } from "../Controllers/DefController.js";
 import { createProduct, getAllProducts } from "../Controllers/ProductController.js";
 import { createCategory, getAllCategories } from "../Controllers/CategoryController.js";
 import { createTransaction, getTransactionHistory } from "../Controllers/TransactionController.js";
+// =============================== Login Register Logout Start ====================================
 export const userRouters = express.Router();
 userRouters.post("/register", registerUser);
 userRouters.post("/login", loginUser);
 userRouters.use(ProtectedRoutes);
 userRouters.post("/logout", logoutUser);
+// =============================== Login Register Logout End ====================================
 
+// ============================== Authorization start ===========================================
 export const defRouters = express.Router()
 defRouters.get("/me",apiAuthorize)
+// ============================== Authorization end ===========================================
 
 export const productRoutes = express.Router()
 export const categoryRoutes = express.Router()
