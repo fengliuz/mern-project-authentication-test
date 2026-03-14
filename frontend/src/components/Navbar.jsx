@@ -17,6 +17,7 @@ const Navbar = ({ onSelectedTheme }) => {
     "night",
     "synthwave",
     "halloween",
+    "luxury"
   ];
   return (
     <nav className="navbar bg-secondary/65 ">
@@ -28,7 +29,7 @@ const Navbar = ({ onSelectedTheme }) => {
             <Link>
               <img
                 src={`${user?.avatar || "https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"}`}
-                className=" size-10 rounded-full border-secondary border-2"
+                className=" size-10 rounded-full border-secondary border-2 "
               />
             </Link>
             <button

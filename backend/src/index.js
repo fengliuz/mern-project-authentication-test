@@ -44,7 +44,10 @@ app.get(
   }),
 );
 
-app.use("/api/auth", userRouters); //userRouting
+app.use("/api/auth", userRouters); 
+app.use("/api/product", productRoutes); 
+app.use("/api/category", categoryRoutes); 
+app.use("/api/transaction", transactionRoutes); 
 app.use("/api", defRouters); //defRouting
 app.use("/api/category",categoryRouters) //categoryRouting
 app.use("/api/product",productRoutes) //productRouting

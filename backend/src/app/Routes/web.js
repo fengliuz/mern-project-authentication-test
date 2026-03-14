@@ -13,6 +13,7 @@ userRouters.post("/register", registerUser);
 userRouters.post("/login", loginUser);
 userRouters.use(ProtectedRoutes);
 userRouters.post("/logout", logoutUser);
+// =============================== Login Register Logout End ====================================
 
 export const categoryRouters = express.Router()
 categoryRouters.use(ProtectedRoutes)
