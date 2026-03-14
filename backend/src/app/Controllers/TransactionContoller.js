@@ -53,13 +53,13 @@ export const createTransaction = async (req, res) => {
 };
 export const getAllTransactionsHistory = async (req, res) => {
   try {
-    const products = await Product.find().populate("category", "name");
+    const transactions = await Transaction.find().populate("product", "sku name").populate("operator","username");
     res
       .status(200)
-      .json({ message: "Success to retrieving Products data", data: products });
+      .json({ message: "Success to retrieving Transactions data history", data: transactions });
   } catch (error) {
     res
       .status(500)
-      .json({ message: `Failed retrieve Products Data ${error.message}` });
+      .json({ message: `Failed retrieve Transactions Data ${error.message}` });
   }
 };
