@@ -6,7 +6,7 @@ import { useAuth } from "../auth/AuthContext";
 const MainLayout = ({ onSelectedTheme }) => {
   const { appName } = useAuth();
   // Posisi bisa: 'top', 'left', 'right'
-  const [navPosition, setNavPosition] = useState("top"); 
+  const [navPosition, setNavPosition] = useState(localStorage.getItem("navpos")); 
 
   // Logika Class Grid berdasarkan posisi
   const layoutStyles = {
@@ -14,7 +14,10 @@ const MainLayout = ({ onSelectedTheme }) => {
     left: "grid-cols-[auto_1fr] min-h-screen",
     right: "grid-cols-[1fr_auto] min-h-screen"
   };
-
+  const handleSetNavPosition=(pos)=>{
+    localStorage.setItem("navpos",pos)
+    setNavPosition(pos)
+  }
   return (
     <div className={`grid ${layoutStyles[navPosition]} bg-base-200 transition-all duration-500`}>
       
@@ -22,7 +25,7 @@ const MainLayout = ({ onSelectedTheme }) => {
       <Navbar 
         onSelectedTheme={onSelectedTheme} 
         position={navPosition} 
-        setPosition={setNavPosition} 
+        setPosition={handleSetNavPosition} 
       />
 
       {/* MAIN CONTENT */}
