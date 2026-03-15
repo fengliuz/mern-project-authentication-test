@@ -6,7 +6,7 @@ import session from "express-session";
 import cors from "cors";
 import InfoRoutes from "./app/Middleware/InfoRoutes.js";
 import "./lib/auth.js";
-import { categoryRouters, defRouters, productRoutes, transactionRoutes, userRouters } from "./app/Routes/web.js";
+import { categoryRouters, defRouters, productRoutes, transactionRoutes, userRouters, warehouseRoutes } from "./app/Routes/web.js";
 import { WarehouseVerifier } from "./app/Middleware/WarehouseVerifier.js";
 dotenv.config();
 // app initialization start
@@ -48,6 +48,7 @@ app.get(
 app.use("/api/auth", userRouters); 
 app.use("/api", defRouters); //defRouting
 
+app.use("/api/warehouse",warehouseRoutes) //warehouseRouting
 app.use("/api/category",categoryRouters) //categoryRouting
 app.use("/api/product",productRoutes) //productRouting
 app.use("/api/transaction",transactionRoutes) //transactionRouting

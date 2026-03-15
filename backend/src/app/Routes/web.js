@@ -9,6 +9,7 @@ import { createCategory, getAllCategories } from "../Controllers/CategoryControl
 import { createProduct, getAllProducts } from "../Controllers/ProductController.js";
 import { createTransaction, getAllHistoriesOfTransactions } from "../Controllers/TransactionController.js";
 import { WarehouseVerifier } from "../Middleware/WarehouseVerifier.js";
+import { createWarehouse, getAllMyWarehouses, getWarehouseById } from "../Controllers/WarehouseController.js";
 export const userRouters = express.Router();
 userRouters.post("/register", registerUser);
 userRouters.post("/login", loginUser);
@@ -29,6 +30,12 @@ export const transactionRoutes = express.Router()
 transactionRoutes.use(ProtectedRoutes,WarehouseVerifier)
 transactionRoutes.post("/",createTransaction)
 transactionRoutes.get("/",getAllHistoriesOfTransactions)
+
+export const warehouseRoutes = express.Router()
+warehouseRoutes.use(ProtectedRoutes)
+warehouseRoutes.post("/",createWarehouse)
+warehouseRoutes.get("/",getAllMyWarehouses)
+warehouseRoutes.get("/:id",getWarehouseById)
 
 
 

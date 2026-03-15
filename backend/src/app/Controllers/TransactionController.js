@@ -64,7 +64,7 @@ export const createTransaction = async (req, res) => {
 export const getAllHistoriesOfTransactions = async (req, res) => {
   try {
     const warehouseId = req.headers["x-warehouse-id"];
-    const transactions = await Transaction.find({warehouseId})
+    const transactions = await Transaction.find({warehouseId}).sort({createdAt:-1})
       .populate("operator", "username")
       .populate("product", "name sku");
     return res.status(200).json({
