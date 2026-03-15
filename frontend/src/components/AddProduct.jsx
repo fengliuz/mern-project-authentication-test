@@ -22,6 +22,13 @@ const AddProduct = () => {
     try {
       const res = await api.post("/product", formData);
       toast.success(`${res.data.message}`);
+      setFormData({
+    name: "",
+    description: "",
+    categoryId: "",
+    stock: 0,
+    minStock: 5,
+    unit: "pcs"})
     } catch (error) {
       toast.error(`${error.response.data.message}`);
     }
@@ -55,13 +62,13 @@ const AddProduct = () => {
         type="number"
         placeholder="Stock"
         className="border-2 rounded-sm border-error p-2 w-full mb-2 placeholder:text-base-300/55 bg-base-100/10"
-        onChange={(e)=>setFormData({...formData,stock:e.target.value})}
+        onChange={(e)=>setFormData({...formData,stock:Number(e.target.value)})}
       />
       <input
         type="number"
         placeholder="Stock minimal untuk memperingatkan restock"
         className="border-2 rounded-sm border-error p-2 w-full mb-2 placeholder:text-base-300/55 bg-base-100/10"
-        onChange={(e)=>setFormData({...formData,minStock:e.target.value})}
+        onChange={(e)=>setFormData({...formData,minStock:Number(e.target.value)})}
       />
       <select
         className="border-2 rounded-sm border-error p-2 w-full mb-2"

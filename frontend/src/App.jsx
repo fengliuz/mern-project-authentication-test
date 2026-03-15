@@ -6,6 +6,7 @@ import { AuthProvider } from "./auth/AuthContext";
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import ProtectedRoutes from "./auth/ProtectedRoutes";
+import CategoryManagerPage from "./pages/CategoyManagerPage";
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme"));
 
@@ -37,6 +38,11 @@ function App() {
                 </ProtectedRoutes>
               }
             />
+            <Route path="/category" element={
+              <ProtectedRoutes>
+                <CategoryManagerPage/>
+              </ProtectedRoutes>
+            }/>
           </Route>
         </Routes>
       </AuthProvider>
