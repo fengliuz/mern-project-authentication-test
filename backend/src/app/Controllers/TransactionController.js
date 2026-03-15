@@ -1,4 +1,3 @@
-import Category from "../Models/Category.js";
 import Product from "../Models/Product.js";
 import dotenv from "dotenv";
 import Transaction from "../Models/Transaction.js";
@@ -6,11 +5,16 @@ dotenv.config();
 export const createTransaction = async (req, res) => {
   try {
     const { quantity, type, productId, note } = req.body;
-
-    const product = await Product.findById(productId);
+    const warehouseId = req.headers["x-warehouse-id"];
+    if (!warehouseId) {
+      return res
+        .status(400)
+        .json({ message: "Please select a warehouse first!" });
+    }
+    const product = await Product.findOne({ _id: productId, warehouseId });
     if (!product) {
       return res.status(404).json({
-        message: "Invalid Product Id !",
+        message: "Invalid Product Id in this warehouse!",
       });
     }
     const previousStock = product.stock;
@@ -43,6 +47,7 @@ export const createTransaction = async (req, res) => {
       currentStock,
       previousStock,
       quantity,
+      warehouseId,
       product: productId,
       operator: req.user._id,
     });
@@ -58,7 +63,8 @@ export const createTransaction = async (req, res) => {
 };
 export const getAllHistoriesOfTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find()
+    const warehouseId = req.headers["x-warehouse-id"];
+    const transactions = await Transaction.find({warehouseId})
       .populate("operator", "username")
       .populate("product", "name sku");
     return res.status(200).json({

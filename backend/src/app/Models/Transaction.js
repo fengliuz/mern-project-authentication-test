@@ -13,7 +13,10 @@ const transactionSchema = new mongoose.Schema({
     },
     operator:{
             type:mongoose.Schema.Types.ObjectId,ref:"User",required:true
-        }
+        },
+    warehouseId:{
+        type:mongoose.Schema.Types.ObjectId,ref:"Warehouse",required:true
+    }
 },{timestamps:true})
 
 const Transaction = mongoose.model("Transaction",transactionSchema)

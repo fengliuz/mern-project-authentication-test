@@ -9,7 +9,7 @@ export const createProduct = async (req, res) => {
       return res.status(400).json({ message: "Please select a warehouse first!" });
     }
 
-    const categoryIsExist = await Category.findByOne({_id:categoryId,warehouseId});
+    const categoryIsExist = await Category.findOne({_id:categoryId,warehouseId});
     if (!categoryIsExist) {
       return res.status(404).json({
         message: "Invalid Category Id in this warehouse!",
