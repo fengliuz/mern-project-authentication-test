@@ -21,7 +21,7 @@ const Navbar = ({ onSelectedTheme }) => {
   return (
     <nav className="navbar bg-secondary/65 ">
       <div className="flex justify-between items-center px-0 md:px-5 lg:px-9 w-full text-primary font-bold  text-shadow-slate-900 text-shadow-sm">
-        <p className="text-md lg:text-2xl ">{appName}</p>
+        <Link to={`/`} className="text-md lg:text-2xl ">{appName}</Link>
         {user ? (
           <div className="flex gap-5 justify-center items-center">
             <Link>{user.username}</Link>
