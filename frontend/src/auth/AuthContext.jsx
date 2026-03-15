@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       setUser(null);
       console.log("Error Server Authorizing User," + error);
+      navigate("/login")
     } finally {
       setLoading(false);
     }

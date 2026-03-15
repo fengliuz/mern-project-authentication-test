@@ -86,9 +86,9 @@ const HomePage = () => {
               <div className="divider my-2"></div>
 
               <div className="card-actions justify-between items-center">
-                <div className="flex items-center gap-2 opacity-70">
+                <div className="flex items-center text-success gap-2 opacity-70">
                   <Package size={16} />
-                  <span className="text-xs font-medium">Inventory Active</span>
+                  <span className="text-xs font-medium ">Inventory Active</span>
                 </div>
                 <button
                   onClick={() => handleEnterWarehouse(wh._id, wh.name)}

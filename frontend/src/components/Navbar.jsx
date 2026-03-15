@@ -111,6 +111,9 @@ const Navbar = ({ onSelectedTheme, position, setPosition }) => {
               <Link to="/login" className="btn btn-primary btn-sm">
                 Login
               </Link>
+              <Link to="/register" className="btn btn-primary btn-sm">
+                Register
+              </Link>
             </div>
           )}
         </div>

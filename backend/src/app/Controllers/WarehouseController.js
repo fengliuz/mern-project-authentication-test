@@ -3,7 +3,7 @@ import Warehouse from "../Models/Warehouse.js";
 // 1. Membuat Gudang Baru
 export const createWarehouse = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description,location } = req.body;
 
     // Cek apakah user sudah punya gudang dengan nama yang sama
     const existingWarehouse = await Warehouse.findOne({ 
@@ -19,7 +19,7 @@ export const createWarehouse = async (req, res) => {
 
     const newWarehouse = await Warehouse.create({
       name,
-      description,
+      description,location,
       owner: req.user._id, // User yang login otomatis jadi pemilik
     });
 
