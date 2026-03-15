@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import ProtectedRoutes from "./auth/ProtectedRoutes";
 import CategoryManagerPage from "./pages/CategoyManagerPage";
+import WarehouseProtectedRoute from "./auth/WarehouseProtected";
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme"));
 
@@ -30,19 +31,12 @@ function App() {
           <Route element={<MainLayout onSelectedTheme={handleSelectedTheme} />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoutes>
-                  <HomePage/>
-                </ProtectedRoutes>
-              }
-            />
-            <Route path="/category" element={
-              <ProtectedRoutes>
-                <CategoryManagerPage/>
-              </ProtectedRoutes>
-            }/>
+            <Route element={<ProtectedRoutes />}>
+              <Route path="/" element={<HomePage />} />
+              <Route element={<WarehouseProtectedRoute/>}>
+                <Route path="/category" element={<CategoryManagerPage/>}/>
+              </Route>
+            </Route>
           </Route>
         </Routes>
       </AuthProvider>

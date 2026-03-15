@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{ user, setUser, checkAuth, logout, appName }}>
       {loading ? (
-        <div className="flex justify-center items-center text-center h-screen">
+        <div className="flex justify-center items-center text-center h-screen text-primary">
           Loading... <LoaderIcon className=" animate-spin" />
         </div>
       ) : (
