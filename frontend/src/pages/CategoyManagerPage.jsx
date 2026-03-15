@@ -103,7 +103,7 @@ const CategoryManagerPage = () => {
                       {cat.slug}
                     </td>
                     {/* FIX: max-w diperbesar, lg:max-w-none untuk desktop */}
-                    <td className="p-3 text-sm max-w-[400px] lg:max-w-xs lg:max-w-none">
+                    <td className="p-3 text-sm max-w-[400px] lg:max-w-none lg:max-w-none">
                       <p className="truncate md:whitespace-normal">
                         {cat.description || "-"}
                       </p>
