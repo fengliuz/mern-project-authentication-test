@@ -7,7 +7,10 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { checkAuth } = useAuth();
+  const { checkAuth ,user} = useAuth();
+  if(user){
+    navigate("/")
+  }
   const handleRegisterManually = async (e) => {
     e.preventDefault();
     try {

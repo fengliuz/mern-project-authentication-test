@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../auth/AuthContext";
+import { useEffect } from "react";
 
 const MainLayout = ({ onSelectedTheme }) => {
   const { appName } = useAuth();
@@ -18,6 +19,23 @@ const MainLayout = ({ onSelectedTheme }) => {
     localStorage.setItem("navpos",pos)
     setNavPosition(pos)
   }
+  useEffect(() => {
+  const handleResize = () => {
+    // Jika lebar layar di bawah 768px (standard mobile)
+    if (window.innerWidth < 768) {
+      setNavPosition("top");
+    }
+  };
+
+  // Jalankan saat pertama kali load
+  handleResize();
+
+  // Dengerin setiap kali layar di-resize
+  window.addEventListener("resize", handleResize);
+
+  // Bersihkan event listener saat komponen hilang
+  return () => window.removeEventListener("resize", handleResize);
+}, [setNavPosition]);
   return (
     <div className={`grid ${layoutStyles[navPosition]} bg-base-200 transition-all duration-500`}>
       

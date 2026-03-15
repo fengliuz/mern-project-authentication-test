@@ -9,6 +9,7 @@ import ProtectedRoutes from "./auth/ProtectedRoutes";
 import CategoryManagerPage from "./pages/CategoyManagerPage";
 import WarehouseProtectedRoute from "./auth/WarehouseProtected";
 import CreateWarehousePage from "./pages/CreateWarehousePage";
+import ProductManagerPage from "./pages/ProductManagerPage";
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme"));
 
@@ -37,6 +38,7 @@ function App() {
               <Route path="/create-warehouse" element={<CreateWarehousePage />} />
               <Route element={<WarehouseProtectedRoute/>}>
                 <Route path="/category" element={<CategoryManagerPage/>}/>
+                <Route path="/product" element={<ProductManagerPage/>}/>
               </Route>
             </Route>
           </Route>
