@@ -17,7 +17,6 @@ const Navbar = ({ onSelectedTheme }) => {
     "night",
     "synthwave",
     "halloween",
-    "luxury"
   ];
   return (
     <nav className="navbar bg-secondary/65 ">
@@ -26,18 +25,36 @@ const Navbar = ({ onSelectedTheme }) => {
         {user ? (
           <div className="flex gap-5 justify-center items-center">
             <Link>{user.username}</Link>
-            <Link>
+            <Link className=" hidden md:block">
               <img
                 src={`${user?.avatar || "https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"}`}
                 className=" size-10 rounded-full border-secondary border-2 "
               />
             </Link>
             <button
-              className=" text-red-500  lg:btn lg:btn-outline lg:bg-base-100/40"
+              className=" text-error  lg:btn lg:btn-outline lg:bg-base-100/40"
               onClick={handleLogout}
             >
-              Logout <LogOutIcon></LogOutIcon>
+              <p className=" hidden md:block">Logout</p> <LogOutIcon></LogOutIcon>
             </button>
+             <div className="dropdown dropdown-end ">
+              <div tabIndex={0} role="button" className="btn m-0 lg:m-auto">
+                <p className=" hidden lg:block">
+                  {localStorage.getItem("theme")}
+                </p>
+                <PaletteIcon />
+              </div>
+              <ul
+                tabIndex="-1"
+                className="dropdown-content menu bg-base-100/50 rounded-box z-1 w-52 p-2 shadow-sm"
+              >
+                {themes.map((t) => (
+                  <li key={t}>
+                    <button onClick={() => onSelectedTheme(`${t}`)}>{t}</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         ) : (
           <div className="flex items-center justify-around gap-1 lg:gap-5">

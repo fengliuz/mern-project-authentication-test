@@ -1,5 +1,9 @@
+import AddProduct from "../components/AddProduct";
+
 export default function HomePage (){
     return(
-        <h1>Hi</h1>
+        <div className="flex justify-center items-center min-h-full">
+        <AddProduct/>
+        </div>
     )
 }
