@@ -8,25 +8,25 @@ import ProtectedRoutes from "../Middleware/ProtectedRoutes.js";
 import { createCategory, getAllCategories } from "../Controllers/CategoryController.js";
 import { createProduct, getAllProducts } from "../Controllers/ProductController.js";
 import { createTransaction, getAllHistoriesOfTransactions } from "../Controllers/TransactionController.js";
+import { WarehouseVerifier } from "../Middleware/WarehouseVerifier.js";
 export const userRouters = express.Router();
 userRouters.post("/register", registerUser);
 userRouters.post("/login", loginUser);
-userRouters.use(ProtectedRoutes);
-userRouters.post("/logout", logoutUser);
+userRouters.post("/logout",ProtectedRoutes, logoutUser,);
 // =============================== Login Register Logout End ====================================
 
 export const categoryRouters = express.Router()
-categoryRouters.use(ProtectedRoutes)
+categoryRouters.use(ProtectedRoutes,WarehouseVerifier)
 categoryRouters.post("/",createCategory)
 categoryRouters.get("/",getAllCategories)
 
 export const productRoutes = express.Router()
-productRoutes.use(ProtectedRoutes)
+productRoutes.use(ProtectedRoutes,WarehouseVerifier)
 productRoutes.post("/",createProduct)
 productRoutes.get("/",getAllProducts)
 
 export const transactionRoutes = express.Router()
-transactionRoutes.use(ProtectedRoutes)
+transactionRoutes.use(ProtectedRoutes,WarehouseVerifier)
 transactionRoutes.post("/",createTransaction)
 transactionRoutes.get("/",getAllHistoriesOfTransactions)
 
