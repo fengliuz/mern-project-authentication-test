@@ -78,43 +78,54 @@ const CategoryManagerPage = () => {
       </div>
 
       {/* SECTION LIST TABLE */}
-      <div className="bg-primary p-6 rounded-sm shadow-md w-full text-base-300/70">
-        <div className="flex items-center gap-2 mb-6">
-          <List size={20} className="text-secondary" />
-          <h2 className="text-xl font-bold text-white">Existing Categories</h2>
-        </div>
+   <div className="bg-primary p-6 rounded-sm shadow-md w-full text-base-300/70">
+  <div className="flex items-center gap-2 mb-6">
+    <List size={20} className="text-error" />
+    <h2 className="text-xl font-bold text-white">Existing Categories</h2>
+  </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-error/30 text-base-300/45">
-                <th className="p-3 font-semibold uppercase text-sm">No</th>
-                <th className="p-3 font-semibold uppercase text-sm">Name</th>
-                <th className="p-3 font-semibold uppercase text-sm">Slug</th>
-                <th className="p-3 font-semibold uppercase text-sm">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.length > 0 ? (
-                categories.map((cat, index) => (
-                  <tr key={cat._id} className="border-b border-error/10 hover:bg-base-100/5 transition-colors">
-                    <td className="p-3 text-white">{index + 1}</td>
-                    <td className="p-3 font-medium text-white">{cat.name}</td>
-                    <td className="p-3 text-base-300/80 italic text-sm">{cat.slug}</td>
-                    <td className="p-3 text-sm">{cat.description || "-"}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="p-6 text-center italic opacity-50">
-                    No categories found. Start by adding one above.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+  {/* overflow-x-auto wajib, -mx-4 membantu tabel menempel ke pinggir di HP */}
+  <div className="overflow-x-auto -mx-4 lg:mx-0">
+    <table className="w-full table-fixed md:table-auto border-collapse">
+      <thead>
+        <tr className="border-b border-error/30 text-base-300/60">
+          <th className="p-3 font-semibold uppercase text-xs w-16">No</th>
+          <th className="p-3 font-semibold uppercase text-xs">Name</th>
+          <th className="p-3 font-semibold uppercase text-xs hidden md:table-cell">Slug</th>
+          <th className="p-3 font-semibold uppercase text-xs">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {categories.length > 0 ? (
+          categories.map((cat, index) => (
+            <tr 
+              key={cat._id} 
+              className="border-b border-base-100/30 hover:bg-base-100/10 transition-colors"
+            >
+              <td className="p-3 text-white text-sm">{index + 1}</td>
+              <td className="p-3 font-medium text-white text-sm">{cat.name}</td>
+              <td className="p-3 text-base-300/60 italic text-xs hidden md:table-cell">
+                {cat.slug}
+              </td>
+              {/* FIX: max-w diperbesar, lg:max-w-none untuk desktop */}
+              <td className="p-3 text-sm max-w-[400px] lg:max-w-xs lg:max-w-none">
+                <p className="truncate md:whitespace-normal">
+                  {cat.description || "-"}
+                </p>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="4" className="p-6 text-center italic opacity-50">
+              No categories found. Start by adding one above.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
     </div>
   );
 };
