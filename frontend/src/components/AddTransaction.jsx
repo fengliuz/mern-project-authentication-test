@@ -8,18 +8,18 @@ const AddTransaction = ({ onSuccess, products }) => {
   const [warehouses, setWarehouses] = useState([]);
   const [formData, setFormData] = useState({
     productId: "",
-    type: "IN", // in, OUT, transfer
+    type: "IN", // in, OUT, TRANSFER
     quantity: 1,
-    toWarehouseId: "", // Untuk fitur transfer
+    toWarehouseId: "", // Untuk fitur TRANSFER
     note: ""
   });
 
   const activeWarehouseId = localStorage.getItem("activeWarehouseId");
 
   useEffect(() => {
-    // Ambil daftar gudang untuk pilihan transfer
+    // Ambil daftar gudang untuk pilihan TRANSFER
     api.get("/warehouse").then((res) => {
-      // Filter agar tidak bisa transfer ke gudang sendiri
+      // Filter agar tidak bisa TRANSFER ke gudang sendiri
       const otherWarehouses = res.data.data.filter(w => w._id !== activeWarehouseId);
       setWarehouses(otherWarehouses);
     });
@@ -92,8 +92,8 @@ const AddTransaction = ({ onSuccess, products }) => {
             </button>
             <button 
               type="button" 
-              onClick={() => setFormData({...formData, type: 'transfer'})}
-              className={`join-item btn btn-sm flex-1 border-none ${formData.type === 'transfer' ? 'btn-primary text-white' : 'btn-ghost text-primary'}`}
+              onClick={() => setFormData({...formData, type: 'TRANSFER'})}
+              className={`join-item btn btn-sm flex-1 border-none ${formData.type === 'TRANSFER' ? 'btn-primary text-white' : 'btn-ghost text-primary'}`}
             >
               <Warehouse size={16}/> TRANSFER
             </button>
@@ -113,14 +113,14 @@ const AddTransaction = ({ onSuccess, products }) => {
           />
         </div>
 
-        {/* Dropdown Gudang Tujuan (Hanya muncul jika Transfer) */}
-        <div className={`form-control transition-all duration-300 ${formData.type === 'transfer' ? 'opacity-100 translate-y-0' : 'opacity-0 h-0 pointer-events-none'}`}>
+        {/* Dropdown Gudang Tujuan (Hanya muncul jika TRANSFER) */}
+        <div className={`form-control transition-all duration-300 ${formData.type === 'TRANSFER' ? 'opacity-100 translate-y-0' : 'opacity-0 h-0 pointer-events-none'}`}>
           <label className="label font-black text-primary text-xs uppercase tracking-tighter">Destination Warehouse</label>
           <select 
             className="select select-primary bg-base-100 font-bold"
             value={formData.toWarehouseId}
             onChange={(e) => setFormData({...formData, toWarehouseId: e.target.value})}
-            required={formData.type === 'transfer'}
+            required={formData.type === 'TRANSFER'}
           >
             <option value="">Select destination...</option>
             {warehouses.map(w => (

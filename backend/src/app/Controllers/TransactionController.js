@@ -1,79 +1,156 @@
+import Category from "../Models/Category.js";
 import Product from "../Models/Product.js";
-import dotenv from "dotenv";
 import Transaction from "../Models/Transaction.js";
-dotenv.config();
+import Warehouse from "../Models/Warehouse.js";
+import mongoose from "mongoose";
+
 export const createTransaction = async (req, res) => {
+  // Gunakan session untuk memastikan atomicity (semua sukses atau semua batal)
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    const { quantity, type, productId, note } = req.body;
+    const { quantity, type, productId, note, toWarehouseId } = req.body;
     const warehouseId = req.headers["x-warehouse-id"];
+
     if (!warehouseId) {
-      return res
-        .status(400)
-        .json({ message: "Please select a warehouse first!" });
+      return res.status(400).json({ message: "Please select a warehouse first!" });
     }
-    const product = await Product.findOne({ _id: productId, warehouseId });
+
+    // 1. Validasi Warehouse Asal
+    const warehouse = await Warehouse.findById(warehouseId).populate("owner");
+    if (!warehouse) {
+      throw new Error("Invalid Warehouse Id!");
+    }
+
+    // 2. Validasi Produk di Gudang Asal
+    const product = await Product.findOne({ _id: productId, warehouseId }).session(session).populate("category","name slug description");
     if (!product) {
-      return res.status(404).json({
-        message: "Invalid Product Id in this warehouse!",
-      });
+      throw new Error("Product not found in this warehouse!");
     }
+
     const previousStock = product.stock;
     let currentStock = previousStock;
+
     if (type === "IN") {
       currentStock += Number(quantity);
-    } else if (type === "OUT") {
-      if (quantity < 0) {
-        return res
-          .status(400)
-          .json({ message: "Input above 0 number quantity!" });
-      }
-      if (quantity > currentStock) {
-        return res
-          .status(400)
-          .json({ message: "Stock too less, input lower quantity!" });
+    } 
+    else if (type === "OUT") {
+      if (quantity > previousStock) {
+        throw new Error("Insufficient stock!");
       }
       currentStock -= Number(quantity);
-    } else if (type === "ADJUSTMENT") {
-      if (req.user.username !== process.env.ADMIN) {
-        return res.status(403).json({ message: `Forbidden access` });
+    } 
+    else if (type === "TRANSFER") {
+      // Validasi Owner (Hanya owner gudang yang bisa transfer keluar)
+      if (req.user.username !== warehouse.owner.username) {
+        return res.status(403).json({ message: "Forbidden: Only warehouse owner can transfer items" });
       }
-      currentStock += Number(quantity);
+
+      if (!toWarehouseId) {
+        throw new Error("Destination warehouse ID is required for transfer!");
+      }
+
+      // Kurangi stok di gudang asal
+      if (quantity > previousStock) throw new Error("Insufficient stock for transfer!");
+      currentStock -= Number(quantity);
+
+      // --- LOGIC GUDANG TUJUAN ---
+      // Cari apakah produk dengan SKU/Nama yang sama sudah ada di gudang tujuan
+      let targetProduct = await Product.findOne({ 
+        sku: product.sku, 
+        warehouseId: toWarehouseId 
+      }).session(session);
+      let targetProductCategory = await Category.findOne({ 
+        warehouseId: toWarehouseId,name:product.category.name
+      }).session(session);
+
+      if (targetProductCategory) {
+        // jika ada yaudah
+      } else {
+        // Jika tidak ada, buat categori baru di gudang tujuan (copy data dari categori asal asal)
+        await Category.create([{
+          warehouseId:toWarehouseId,
+          name:product.category.name,
+          slug:product.category.slug,
+          description:product.category.description,
+        }], { session });
+      }
+      if (targetProduct) {
+        // Jika ada, tambahkan stoknya
+        targetProduct.stock += Number(quantity);
+        await targetProduct.save({ session });
+      } else {
+        // Jika tidak ada, buat produk baru di gudang tujuan (copy data dari produk asal)
+        await Product.create([{
+          name: product.name,
+          sku: product.sku,
+          description: product.description,
+          category: product.category._id,
+          unit: product.unit,
+          stock: Number(quantity),
+          minStock: product.minStock,
+          warehouseId: toWarehouseId,
+          createdBy:req.user._id
+        }], { session });
+      }
     }
+
+    // 3. Update stok produk asal
     product.stock = currentStock;
-    await product.save();
-    const newTransaction = await Transaction.create({
-      note,
+    await product.save({ session });
+
+    // 4. Catat Transaksi
+    const newTransaction = await Transaction.create([{
+      note: note || (type === "TRANSFER" ? `Transfer to ${toWarehouseId}` : ""),
       type,
       currentStock,
       previousStock,
       quantity,
       warehouseId,
+      toWarehouseId: type === "TRANSFER" ? toWarehouseId : null,
       product: productId,
       operator: req.user._id,
-    });
+    }], { session });
+
+    // Commit semua perubahan
+    await session.commitTransaction();
+    session.endSession();
+
     return res.status(201).json({
-      message: "Successfully to create a new Transaction",
-      data: newTransaction,
+      message: "Transaction processed successfully",
+      data: newTransaction[0],
     });
+
   } catch (error) {
-    return res.status(500).json({
-      message: `Failed to create a new Transaction ${error.message}`,
+    // Jika ada error, batalkan semua perubahan database yang sempat terjadi
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(error.message.includes("not found") ? 404 : 400).json({
+      message: error.message,
     });
   }
 };
+
 export const getAllHistoriesOfTransactions = async (req, res) => {
   try {
     const warehouseId = req.headers["x-warehouse-id"];
-    const transactions = await Transaction.find({warehouseId}).sort({createdAt:-1})
+    // Tampilkan transaksi di mana gudang ini adalah ASAL atau TUJUAN (untuk transfer)
+    const transactions = await Transaction.find({
+      $or: [{ warehouseId }, { toWarehouseId: warehouseId }]
+    })
+      .sort({ createdAt: -1 })
       .populate("operator", "username")
-      .populate("product", "name sku");
+      .populate("product", "name sku")
+      .populate("toWarehouseId", "name");
+
     return res.status(200).json({
-      message: `Successfully retrieved all transactions data`,
+      message: `Successfully retrieved all transactions`,
       data: transactions,
     });
   } catch (error) {
     return res.status(500).json({
-      message: `Failed to retrieve transactions data ${error.message}`,
+      message: `Error: ${error.message}`,
     });
   }
 };
