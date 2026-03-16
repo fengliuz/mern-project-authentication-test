@@ -6,7 +6,7 @@ import {
 } from "../Controllers/UserController.js";
 import ProtectedRoutes from "../Middleware/ProtectedRoutes.js";
 import { createCategory, getAllCategories } from "../Controllers/CategoryController.js";
-import { createProduct, getAllProducts } from "../Controllers/ProductController.js";
+import { createProduct, deleteProduct, getAllProducts } from "../Controllers/ProductController.js";
 import { createTransaction, getAllHistoriesOfTransactions } from "../Controllers/TransactionController.js";
 import { WarehouseVerifier } from "../Middleware/WarehouseVerifier.js";
 import { createWarehouse, getAllMyWarehouses, getWarehouseById } from "../Controllers/WarehouseController.js";
@@ -25,6 +25,7 @@ export const productRoutes = express.Router()
 productRoutes.use(ProtectedRoutes,WarehouseVerifier)
 productRoutes.post("/",createProduct)
 productRoutes.get("/",getAllProducts)
+productRoutes.delete("/:id",deleteProduct)
 
 export const transactionRoutes = express.Router()
 transactionRoutes.use(ProtectedRoutes,WarehouseVerifier)

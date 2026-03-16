@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import api from "../lib/api";
 import toast from "react-hot-toast";
-const AddProduct = () => {
+const AddProduct = ({onSuccess}) => {
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -21,6 +21,7 @@ const AddProduct = () => {
     e.preventDefault();
     try {
       const res = await api.post("/product", formData);
+      onSuccess()
       toast.success(`${res.data.message}`);
       setFormData({
     name: "",

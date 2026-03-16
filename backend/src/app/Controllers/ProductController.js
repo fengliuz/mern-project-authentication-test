@@ -3,13 +3,25 @@ import Product from "../Models/Product.js";
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, sku, stock, categoryId, minStock, unit, description } =req.body;
-    const warehouseId = req.headers["x-warehouse-id"]
+    const { name, sku, stock, categoryId, minStock, unit, description } =
+      req.body;
+    const warehouseId = req.headers["x-warehouse-id"];
+
     if (!warehouseId) {
-      return res.status(400).json({ message: "Please select a warehouse first!" });
+      return res
+        .status(400)
+        .json({ message: "Please select a warehouse first!" });
+    }
+    if (minStock < 0 || stock < 0) {
+      return res
+        .status(400)
+        .json({ message: "Please input a valid stock number!" });
     }
 
-    const categoryIsExist = await Category.findOne({_id:categoryId,warehouseId});
+    const categoryIsExist = await Category.findOne({
+      _id: categoryId,
+      warehouseId,
+    });
     if (!categoryIsExist) {
       return res.status(404).json({
         message: "Invalid Category Id in this warehouse!",
@@ -42,11 +54,77 @@ export const createProduct = async (req, res) => {
     });
   }
 };
+export const editProduct = async (req, res) => {
+  try {
+    const { name, stock, categoryId, minStock, unit, description } =
+      req.body;
+    const warehouseId = req.headers["x-warehouse-id"];
+    const productId = req.params.id
+    if (!warehouseId) {
+      return res
+        .status(400)
+        .json({ message: "Please select a warehouse first!" });
+    }
+    if (minStock < 0 || stock < 0) {
+      return res
+        .status(400)
+        .json({ message: "Please input a valid stock number!" });
+    }
+
+    const categoryIsExist = await Category.findOne({
+      _id: categoryId,
+      warehouseId,
+    });
+    if (!categoryIsExist) {
+      return res.status(404).json({
+        message: "Invalid Category Id in this warehouse!",
+      });
+    }
+    const newProduct = await Product.updateOne({_id:productId},{name,stock,minStock,category:categoryId})
+    return res.status(201).json({
+      message: "Successfully to create a new Product in this warehouse",
+      data: newProduct,
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      return res.status(400).json({
+        message: `the ${field} is already created in this warehouse, try another ${field}`,
+      });
+    }
+    return res.status(500).json({
+      message: `Failed to create a new Product ${error.message}`,
+    });
+  }
+};
+export const deleteProduct = async (req, res) => {
+  try {
+    const  productId  = req.params.id;
+    const warehouseId = req.headers["x-warehouse-id"];
+
+    if (!warehouseId) {
+      return res
+        .status(400)
+        .json({ message: "Please select a warehouse first!" });
+    }
+    const product = await Product.deleteOne({_id:productId});
+    if(!product){
+      return res.status(404).json({message:'Product not exists'})
+    }
+    return res.status(201).json({
+      message: "Successfully to delete Product in this warehouse "+productId,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Failed to delete a new Product ${error.message}`,
+    });
+  }
+};
 export const getAllProducts = async (req, res) => {
   try {
-    const warehouseId = req.headers["x-warehouse-id"]
-    
-    const products = await Product.find({warehouseId})
+    const warehouseId = req.headers["x-warehouse-id"];
+
+    const products = await Product.find({ warehouseId })
       .populate("createdBy", "username")
       .populate("category", "name");
     return res.status(200).json({

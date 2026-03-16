@@ -11,7 +11,7 @@ import WarehouseProtectedRoute from "./auth/WarehouseProtected";
 import CreateWarehousePage from "./pages/CreateWarehousePage";
 import ProductManagerPage from "./pages/ProductManagerPage";
 function App() {
-  const [theme, setTheme] = useState(localStorage.getItem("theme"));
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "forest");
 
   useEffect(() => {
     async function setTheme() {

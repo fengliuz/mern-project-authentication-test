@@ -7,6 +7,8 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
   Minus,
+  LayoutDashboard,
+  LayoutGrid,
 } from "lucide-react";
 import AddCategory from "../components/AddCategory";
 
@@ -54,7 +56,12 @@ const CategoryManagerPage = () => {
     <div className="flex min-h-full flex-col gap-8 p-4 lg:p-8">
       {/* SECTION FORM */}
       {isFormOpen ? (
-        <AddCategory {...{ loading,setFormData,formData,handleSubmit,setIsFormOpen }}/>
+        <div className="w-full flex  justify-between">
+          <AddCategory
+            {...{ loading, setFormData, formData, handleSubmit, setIsFormOpen }}
+          />
+          <LayoutGrid  className="hidden md:block animate-pulse hover:animate-ping size-1/5 self-center mx-auto"/>{" "}
+        </div>
       ) : (
         <div className={`p-6 lg:w-1/2  w-full text-base-300/70`}>
           <div className="flex items-center gap-2 mb-4">
