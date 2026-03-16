@@ -1,4 +1,5 @@
 import Category from "../Models/Category.js";
+import Product from "../Models/Product.js";
 
 export const createCategory = async (req, res) => {
   try {
@@ -73,3 +74,32 @@ export const editCategory  = async (req, res) => {
   }
 };
 
+// --- DELETE CATEGORY ---
+export const deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const category = await Category.findById(id);
+    if (!category) {
+      return res.status(404).json({ message: "Kategori tidak ditemukan" });
+    }
+
+    // PILIHAN A: Menghapus produk yang terkait (Cascade Delete)
+    // await Product.deleteMany({ category: id });
+
+    // PILIHAN B: Set category produk menjadi null agar produk TIDAK hilang
+    await Product.updateMany(
+      { category: id }, 
+      { $set: { category: null } } 
+    );
+
+    // Hapus kategorinya
+    await category.deleteOne();
+
+    res.status(200).json({
+      message: "Kategori dihapus, produk terkait kini tidak berkategori",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

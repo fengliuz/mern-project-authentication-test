@@ -38,7 +38,7 @@ const CategoryManagerPage = () => {
       toast.success("Kategori berhasil dihapus");
       fetchCategories();
     } catch (error) {
-      toast.error("Gagal menghapus kategori");
+      toast.error("Gagal menghapus kategori",error.response.data);
     }
   };
 
