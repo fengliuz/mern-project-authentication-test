@@ -119,13 +119,13 @@ const CategoryManagerPage = () => {
 
   {/* Wrapper Tabel: Scroll Horizontal Terkontrol */}
   <div className="w-full overflow-x-auto overflow-y-hidden">
-    <table className="table table-zebra w-full min-w-[1px]"> 
+    <table className="table table-zebra w-full min-w-[100px]"> 
       <thead className="bg-base-200/50">
         <tr className="text-primary uppercase text-[10px] tracking-widest border-b border-base-300">
           <th className="w-12 text-center bg-transparent">No</th>
           <th className="bg-transparent">Category</th>
           <th className="hidden md:table-cell bg-transparent">Slug</th>
-          <th className="bg-transparent w-1/3">Description</th>
+          <th className="bg-transparent w-1/3 hidden md:table-header-group">Description</th>
           <th className="w-16 text-center bg-transparent">Actions</th>
         </tr>
       </thead>
@@ -150,8 +150,8 @@ const CategoryManagerPage = () => {
                   {cat.slug}
                 </code>
               </td>
-              <td>
-                <p className="text-xs opacity-60 line-clamp-1 md:line-clamp-2 leading-relaxed">
+              <td className="hidden md:table-cell">
+                <p className="text-xs opacity-60 line-clamp-1 md:line-clamp-2 leading-relaxed ">
                   {cat.description || "-"}
                 </p>
               </td>
