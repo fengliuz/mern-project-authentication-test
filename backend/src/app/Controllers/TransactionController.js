@@ -28,7 +28,6 @@ export const createTransaction = async (req, res) => {
     if (!product) {
       throw new Error("Product not found in this warehouse!");
     }
-
     const previousStock = product.stock;
     let currentStock = previousStock;
 
@@ -99,10 +98,10 @@ export const createTransaction = async (req, res) => {
     // 3. Update stok produk asal
     product.stock = currentStock;
     await product.save({ session });
-
+    const targetWarehouse = await Warehouse.findById(toWarehouseId)
     // 4. Catat Transaksi
     const newTransaction = await Transaction.create([{
-      note: note || (type === "TRANSFER" ? `Transfer to ${toWarehouseId}` : ""),
+      note: note || (type === "TRANSFER" ? `Transfer to ${targetWarehouse.name}` : ""),
       type,
       currentStock,
       previousStock,
