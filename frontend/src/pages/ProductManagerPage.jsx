@@ -21,8 +21,9 @@ const ProductManagerPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const activeWarehouseId = localStorage.getItem("activeWarehouseId");
   const activeWarehouseName = localStorage.getItem("activeWarehouseName");
 
@@ -40,14 +41,13 @@ const ProductManagerPage = () => {
   const handleDelete = async (id) => {
     try {
       const res = await api.delete(`/product/${id}`);
-      toast.success(res.data.message)
-      fetchProducts()
+      toast.success(res.data.message);
+      fetchProducts();
     } catch (error) {
       toast.error("Gagal hapus produk", error.response.data.message);
-
     }
-
   };
+
   useEffect(() => {
     if (activeWarehouseId) fetchProducts();
     // eslint-disable-next-line
@@ -77,7 +77,10 @@ const ProductManagerPage = () => {
 
         <div className="flex gap-2">
           <button
-            onClick={() => setIsFormOpen(!isFormOpen)}
+            onClick={() => {
+              setIsFormOpen(!isFormOpen);
+              setIsEditFormOpen(false);
+            }}
             className={`btn ${
               isFormOpen ? "btn-error" : "btn-primary"
             } shadow-lg group`}
@@ -98,13 +101,33 @@ const ProductManagerPage = () => {
       </div>
 
       {/* FORM SECTION */}
-      {isFormOpen && (
+      {!isEditFormOpen && isFormOpen && (
         <div className="flex justify-center animate-in zoom-in-95 duration-300">
           <AddProduct
             onSuccess={() => {
               setIsFormOpen(false);
               fetchProducts();
             }}
+            onClose={() => {
+              setIsFormOpen(false);
+            }}
+            isEdit={false}
+          />
+        </div>
+      )}
+      {isEditFormOpen && !isFormOpen && (
+        <div className="flex justify-center animate-in zoom-in-95 duration-300">
+          <AddProduct
+            onSuccess={() => {
+              setIsEditFormOpen(false);
+              fetchProducts();
+            }}
+            onClose={() => {
+              setIsEditFormOpen(false);
+              setSelectedProduct(null);
+            }}
+            isEdit={true}
+            id={selectedProduct}
           />
         </div>
       )}
@@ -160,7 +183,12 @@ const ProductManagerPage = () => {
                         className="dropdown-content menu p-2 shadow  rounded-box w-40 z-1 bg-base-200"
                       >
                         <li className="text-blue-400">
-                          <button>
+                          <button
+                            onClick={() => {
+                              setSelectedProduct(p._id);
+                              setIsEditFormOpen(true);
+                            }}
+                          >
                             <Edit2Icon /> Edit
                           </button>
                         </li>

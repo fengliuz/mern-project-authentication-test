@@ -56,10 +56,9 @@ export const createProduct = async (req, res) => {
 };
 export const editProduct = async (req, res) => {
   try {
-    const { name, stock, categoryId, minStock, unit, description } =
-      req.body;
+    const { name, stock, categoryId, minStock, unit, description } = req.body;
     const warehouseId = req.headers["x-warehouse-id"];
-    const productId = req.params.id
+    const productId = req.params.id;
     if (!warehouseId) {
       return res
         .status(400)
@@ -80,10 +79,13 @@ export const editProduct = async (req, res) => {
         message: "Invalid Category Id in this warehouse!",
       });
     }
-    const newProduct = await Product.updateOne({_id:productId},{name,stock,minStock,category:categoryId})
+    const product = await Product.updateOne(
+      { _id: productId, warehouseId },
+      { name, stock, minStock, category: categoryId, unit, description },
+    );
     return res.status(201).json({
-      message: "Successfully to create a new Product in this warehouse",
-      data: newProduct,
+      message: "Successfully to update a Product in this warehouse",
+      data: product,
     });
   } catch (error) {
     if (error.code === 11000) {
@@ -93,13 +95,13 @@ export const editProduct = async (req, res) => {
       });
     }
     return res.status(500).json({
-      message: `Failed to create a new Product ${error.message}`,
+      message: `Failed to update a Product ${error.message}`,
     });
   }
 };
 export const deleteProduct = async (req, res) => {
   try {
-    const  productId  = req.params.id;
+    const productId = req.params.id;
     const warehouseId = req.headers["x-warehouse-id"];
 
     if (!warehouseId) {
@@ -107,12 +109,12 @@ export const deleteProduct = async (req, res) => {
         .status(400)
         .json({ message: "Please select a warehouse first!" });
     }
-    const product = await Product.deleteOne({_id:productId});
-    if(!product){
-      return res.status(404).json({message:'Product not exists'})
+    const product = await Product.deleteOne({ _id: productId });
+    if (!product) {
+      return res.status(404).json({ message: "Product not exists" });
     }
     return res.status(201).json({
-      message: "Successfully to delete Product in this warehouse "+productId,
+      message: "Successfully to delete Product in this warehouse " + productId,
     });
   } catch (error) {
     return res.status(500).json({
