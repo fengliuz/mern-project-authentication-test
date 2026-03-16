@@ -1,45 +1,108 @@
-import { MinusCircleIcon } from "lucide-react";
+import { useState, useEffect } from "react";
+import api from "../lib/api";
+import toast from "react-hot-toast";
+import { X } from "lucide-react";
 
-export default function AddCategory({loading,setFormData,formData,handleSubmit,setIsFormOpen}) {
+const AddCategory = ({ onSuccess, onClose, isEdit, id, initialData }) => {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+  });
+
+  useEffect(() => {
+    if (isEdit && initialData) {
+      setFormData({
+        name: initialData.name,
+        description: initialData.description || "",
+      });
+    }
+  }, [isEdit, initialData]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (isEdit) {
+        await api.put(`/category/${id}`, formData);
+        toast.success("Kategori berhasil diperbarui");
+      } else {
+        await api.post("/category", formData);
+        toast.success("Kategori berhasil ditambahkan");
+      }
+      onSuccess();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Terjadi kesalahan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div
-      className={`bg-primary p-6 rounded-sm shadow-md lg:w-1/2  w-full text-base-300/70`}
+    <form
+      onSubmit={handleSubmit}
+      className="bg-base-100 rounded-2xl shadow-2xl overflow-hidden border border-base-300 animate-in zoom-in-95 duration-300"
     >
-      <div className="flex items-center gap-2 mb-4">
-        <MinusCircleIcon
-          onClick={() => setIsFormOpen((prev) => !prev)}
-          className="text-base-300/50"
-        />
-        <h2 className="text-xl font-bold text-white">Add New Category</h2>
+      <div className="bg-primary p-6 text-primary-content flex justify-between items-center">
+        <div>
+          <h2 className="text-xl font-black uppercase tracking-tight">
+            {isEdit ? "Edit Category" : "New Category"}
+          </h2>
+          <p className="text-xs opacity-70">Kelola klasifikasi produk Anda</p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn btn-circle btn-sm btn-ghost hover:bg-black/10"
+        >
+          <X size={20} />
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="text"
-          placeholder="Category Name (e.g. Elektronik)"
-          value={formData.name}
-          className="border-2 rounded-sm border-error p-2 w-full placeholder:text-base-300/55 bg-base-100/10 text-white focus:outline-none focus:border-secondary transition-all"
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
-        />
-        <textarea
-          placeholder="Short Description"
-          value={formData.description}
-          className="border-2 rounded-sm border-error p-2 w-full h-24 placeholder:text-base-300/55 bg-base-100/10 text-white focus:outline-none focus:border-secondary transition-all"
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-        />
+      <div className="p-6 space-y-4">
+        <div className="form-control">
+          <label className="label-text mb-1 font-bold ml-1">Nama Kategori</label>
+          <input
+            type="text"
+            required
+            placeholder="Contoh: Elektronik, Makanan, dll"
+            className="input input-bordered w-full focus:input-primary"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+        </div>
+
+        <div className="form-control">
+          <label className="label-text mb-1 font-bold ml-1">Deskripsi</label>
+          <textarea
+            className="textarea textarea-bordered h-28 focus:textarea-primary"
+            placeholder="Jelaskan kategori ini secara singkat..."
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="p-6 border-t border-base-200 bg-base-200/50 flex gap-3">
+        <button type="button" onClick={onClose} className="btn btn-ghost flex-1">
+          Batal
+        </button>
         <button
           type="submit"
           disabled={loading}
-          className={`bg-secondary font-bold border border-accent shadow-md hover:shadow-xl transition duration-200 text-white px-4 py-2 rounded-sm ${
-            loading ? "opacity-50 cursor-not-allowed" : "hover:-translate-y-0.5"
-          }`}
+          className="btn btn-primary flex-[2] shadow-lg shadow-primary/20"
         >
-          {loading ? "Saving..." : "Create Category"}
+          {loading ? (
+            <span className="loading loading-spinner"></span>
+          ) : isEdit ? (
+            "Update Kategori"
+          ) : (
+            "Simpan Kategori"
+          )}
         </button>
-      </form>
-    </div>
+      </div>
+    </form>
   );
-}
+};
+
+export default AddCategory;

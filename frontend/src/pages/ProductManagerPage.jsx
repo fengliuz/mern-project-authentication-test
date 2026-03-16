@@ -41,6 +41,7 @@ const ProductManagerPage = () => {
   const handleDelete = async (id) => {
     try {
       const res = await api.delete(`/product/${id}`);
+      if(!window.confirm("Sure to delete this product?")) return
       toast.success(res.data.message);
       fetchProducts();
     } catch (error) {
@@ -128,6 +129,7 @@ const ProductManagerPage = () => {
             }}
             isEdit={true}
             id={selectedProduct}
+            
           />
         </div>
       )}
@@ -160,7 +162,7 @@ const ProductManagerPage = () => {
             return (
               <div
                 key={p._id}
-                className={`group card bg-base-100 shadow-sm hover:shadow-xl transition-all border-b-4 ${
+                className={`group card bg-base-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 ${
                   isLowStock ? "border-error" : "border-secondary"
                 }`}
               >

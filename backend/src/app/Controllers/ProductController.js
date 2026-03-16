@@ -122,6 +122,23 @@ export const deleteProduct = async (req, res) => {
     });
   }
 };
+export const getProduct = async (req, res) => {
+  try {
+    const warehouseId = req.headers["x-warehouse-id"];
+    const productId = req.params.id
+    const product = await Product.findOne({_id:productId,warehouseId})
+      .populate("createdBy", "username")
+      .populate("category", "name");
+    return res.status(200).json({
+      message: `Successfully retrieved product data`,
+      data: product,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Failed to retrieve product data ${error.message}`,
+    });
+  }
+};
 export const getAllProducts = async (req, res) => {
   try {
     const warehouseId = req.headers["x-warehouse-id"];
