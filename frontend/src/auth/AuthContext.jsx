@@ -10,7 +10,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const appName = "WindahouseWare";
+  const appName = "WindaWare";
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const checkAuth = async () => {

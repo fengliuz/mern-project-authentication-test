@@ -36,28 +36,7 @@ const UserNav = ({user,isRight,isLeft,logout,themes,onSelectedTheme}) => {
           <p className="font-bold text-primary">{user.username}</p>
         </li>
 
-        {/* MOBILE ONLY NAV: Muncul di dropdown saat layar kecil */}
-        <div className="lg:hidden">
-          <li className="menu-title text-[10px] uppercase opacity-50">
-            Navigation
-          </li>
-          <li>
-            <Link to="/category">
-              <LayoutGrid size={18} /> Categories
-            </Link>
-          </li>
-          <li>
-            <Link to="/product">
-              <Box size={18} /> Products
-            </Link>
-          </li>
-          <li>
-            <Link to="/transaction">
-              <Warehouse size={18} /> Transactions
-            </Link>
-          </li>
-          <div className="divider my-1"></div>
-        </div>
+    
         <div className="collapse collapse-arrow join-item border-none">
           <input type="checkbox" className="min-h-0" />
           <div className="collapse-title p-0 min-h-0 flex items-center gap-3 px-4 py-2 hover:bg-base-content/5 rounded-lg cursor-pointer">

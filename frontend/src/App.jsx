@@ -10,6 +10,7 @@ import CategoryManagerPage from "./pages/CategoyManagerPage";
 import WarehouseProtectedRoute from "./auth/WarehouseProtected";
 import CreateWarehousePage from "./pages/CreateWarehousePage";
 import ProductManagerPage from "./pages/ProductManagerPage";
+import TransactionPage from "./pages/TransactionPage";
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "forest");
 
@@ -39,6 +40,7 @@ function App() {
               <Route element={<WarehouseProtectedRoute/>}>
                 <Route path="/category" element={<CategoryManagerPage/>}/>
                 <Route path="/product" element={<ProductManagerPage/>}/>
+                <Route path="/transaction" element={<TransactionPage/>}/>
               </Route>
             </Route>
           </Route>

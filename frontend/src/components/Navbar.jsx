@@ -4,6 +4,7 @@ import NavLinks from "./navcomponents/NavLink";
 import WarehouseSelector from "./navcomponents/WarehouseSelector";
 import LayoutSettings from "./navcomponents/LayoutSettings";
 import UserNav from "./navcomponents/UserNav.";
+import { Warehouse } from "lucide-react";
 
 const Navbar = ({ onSelectedTheme, position, setPosition }) => {
   const { appName, user, logout } = useAuth();
@@ -63,7 +64,9 @@ const Navbar = ({ onSelectedTheme, position, setPosition }) => {
                 : "text-md lg:text-2xl font-black text-base-100 drop-shadow-md mr-4"
             }`}
           >
-            {appName}
+            <div className="flex align-center">
+            <Warehouse/>{appName}
+            </div>
           </Link>
 
           <NavLinks
@@ -107,13 +110,19 @@ const Navbar = ({ onSelectedTheme, position, setPosition }) => {
               ></UserNav>
             </>
           ) : (
-            <div className="flex gap-2">
+            <div className={`${isVertical?'flex flex-col align-top gap-50 py-auto':'flex gap-2 '}`}>
               <Link to="/login" className="btn btn-primary btn-sm">
                 Login
               </Link>
               <Link to="/register" className="btn btn-primary btn-sm">
                 Register
               </Link>
+                <LayoutSettings
+                setPosition={setPosition}
+                isTop={isTop}
+                isRight={isRight}
+                isLeft={isLeft}
+              />
             </div>
           )}
         </div>
