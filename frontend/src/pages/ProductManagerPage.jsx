@@ -19,6 +19,7 @@ import AddProduct from "../components/AddProduct";
 
 const ProductManagerPage = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
@@ -31,6 +32,30 @@ const ProductManagerPage = () => {
     try {
       setLoading(true);
       const res = await api.get(`/product?warehouseId=${activeWarehouseId}`);
+      const resc = await api.get(`/category?warehouseId=${activeWarehouseId}`);
+      setProducts(res.data.data);
+      setCategories(resc.data.data);
+    } catch (error) {
+      toast.error("Gagal memuat produk", error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchProductsByCategory = async (categoryId) => {
+    try {
+      if (!categoryId) {
+        fetchProducts();
+        return;
+      }
+      if(categoryId === "nOnEofExiSt"){
+        fetchProducts()
+        return;
+      }
+      setLoading(true);
+      const res = await api.get(
+        `/product/category/${categoryId}?warehouseId=${activeWarehouseId}`,
+      );
+      console.log(res.data.message)
       setProducts(res.data.data);
     } catch (error) {
       toast.error("Gagal memuat produk", error.response.data.message);
@@ -41,16 +66,15 @@ const ProductManagerPage = () => {
   const handleDelete = async (id) => {
     try {
       const res = await api.delete(`/product/${id}`);
-      if(!window.confirm("Sure to delete this product?")) return
+      if (!window.confirm("Sure to delete this product?")) return;
       toast.success(res.data.message);
       fetchProducts();
     } catch (error) {
       toast.error("Gagal hapus produk", error.response.data.message);
     }
   };
-
   useEffect(() => {
-    if (activeWarehouseId) fetchProducts();
+    if (activeWarehouseId) fetchProductsByCategory();
     // eslint-disable-next-line
   }, [activeWarehouseId]);
 
@@ -129,7 +153,6 @@ const ProductManagerPage = () => {
             }}
             isEdit={true}
             id={selectedProduct}
-            
           />
         </div>
       )}
@@ -148,6 +171,17 @@ const ProductManagerPage = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <SearchCode />
+        <select
+          className="select select-bordered w-full focus:select-primary"
+          onChange={(e) => fetchProductsByCategory(e.target.value)}
+        >
+          <option value="nOnEofExiSt">Pilih Kategori</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* GRID CARDS: Pengganti Tabel */}

@@ -156,3 +156,24 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
+export const getAllProductsByCategory = async (req, res) => {
+  try {
+    const warehouseId = req.headers["x-warehouse-id"];
+    const categoryId = req.params.categoryId
+    
+    const products = await Product.find({ warehouseId,category:categoryId})
+      .populate("createdBy", "username")
+      .populate("category", "name");
+      const categoryName = products.length > 0 && products[0].category 
+      ? products[0].category.name 
+      : "Selected Category";
+    return res.status(200).json({
+      message: `Successfully retrieved all products data with Category: ${categoryName} `,
+      data: products,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Failed to retrieve products data ${error.message}`,
+    });
+  }
+};
