@@ -16,9 +16,9 @@ app.use(express.json()); //for reqtrieve body request
 app.use(InfoRoutes); //Info of the api's-hit
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:true,
     credentials: true,
-    methods: ["POST", "GET", "DELETE", "PUT"],
+    methods: ["POST", "GET", "DELETE", "PUT","OPTIONS"],
   }),
 );
 app.use(
@@ -56,7 +56,7 @@ app.use("/api/transaction",transactionRoutes) //transactionRouting
 // middleware End
 // Connecting database and listening app
 connectDB().then(() => {
-  app.listen(process.env.PORT, (req, res) => {
+  app.listen(process.env.PORT,"0.0.0.0", (req, res) => {
     console.log("res");
   });
 });
