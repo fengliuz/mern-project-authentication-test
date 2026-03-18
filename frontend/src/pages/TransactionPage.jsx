@@ -11,6 +11,7 @@ import {
   Box,
   User,
   SmilePlus,
+  Trash2,
 } from "lucide-react";
 import AddTransaction from "../components/AddTransaction";
 
@@ -28,7 +29,18 @@ const TransactionPage = () => {
   });
 
   const activeWarehouseId = localStorage.getItem("activeWarehouseId");
+  const handleDelete = async (id) => {
+    // Gunakan confirm sederhana atau library modal
+    if (!window.confirm("Hapus transaksi ini? penghapusan ini tidak akan mengembalikan ke stock barang sebelumnya!")) return;
 
+    try {
+      await api.delete(`/transaction/${id}`);
+      toast.success("Riwayat transaksi telah dihapus!");
+      fetchData(); // Refresh data untuk melihat perubahan stok terbaru
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Gagal menghapus transaksi");
+    }
+  };
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -49,7 +61,6 @@ const TransactionPage = () => {
   useEffect(() => {
     if (activeWarehouseId) fetchData();
   }, [activeWarehouseId]);
-
 
   return (
     <div className="flex flex-col gap-6 p-4 lg:p-8 min-h-screen bg-base-200/50">
@@ -112,7 +123,11 @@ const TransactionPage = () => {
                 {/* Type Indicator Bar */}
                 <div
                   className={`w-2 ${
-                    t.type === "IN" ? "bg-success" : "bg-error"
+                    t.type === "IN" ||
+                    (t.type === "TRANSFER" &&
+                      t.toWarehouseId?._id === activeWarehouseId)
+                      ? "bg-success"
+                      : "bg-error"
                   }`}
                 ></div>
 
@@ -120,7 +135,9 @@ const TransactionPage = () => {
                   <div className="flex items-center gap-4">
                     <div
                       className={`p-3 rounded-full ${
-                        t.type === "IN"
+                        t.type === "IN" ||
+                        (t.type === "TRANSFER" &&
+                          t.toWarehouseId?._id === activeWarehouseId)
                           ? "bg-success/10 text-success"
                           : "bg-error/10 text-error"
                       }`}
@@ -139,27 +156,44 @@ const TransactionPage = () => {
                         <span className="flex items-center gap-1">
                           <Box size={12} /> SKU: {t.productId?.sku || "-"}
                         </span>
-                        
+
                         <span className="flex items-center gap-1">
-                          <SmilePlus size={12} /> Operator: {t.operator?.username || "-"}
+                          <SmilePlus size={12} /> Operator:{" "}
+                          {t.operator?.username || "-"}
                         </span>
-                        
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <p
-                      className={`text-2xl font-black ${
-                        t.type === "IN" ? "text-success" : "text-error"
-                      }`}
+                  <div className="text-right flex gap-2">
+                    <div className="">
+                      <p
+                        className={`text-2xl font-black ${
+                          t.type === "IN" ||
+                          (t.type === "TRANSFER" &&
+                            t.toWarehouseId?._id === activeWarehouseId)
+                            ? "text-success"
+                            : "text-error"
+                        }`}
+                      >
+                        {t.type === "IN" ||
+                        (t.type === "TRANSFER" &&
+                          t.toWarehouseId?._id === activeWarehouseId)
+                          ? "+"
+                          : "-"}
+                        {t.quantity}
+                      </p>
+                      <p className="text-[10px] opacity-40 italic max-w-[150px] truncate">
+                        {t.note || "No notes"}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleDelete(t._id)}
+                      className="btn btn-ghost btn-xs text-error hover:bg-error/10 p-1 h-auto min-h-0"
+                      title="Delete & Revert Stock"
                     >
-                      {t.type === "IN" ? "+" : "-"}
-                      {t.quantity}
-                    </p>
-                    <p className="text-[10px] opacity-40 italic max-w-[150px] truncate">
-                      {t.note || "No notes"}
-                    </p>
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
               </div>
