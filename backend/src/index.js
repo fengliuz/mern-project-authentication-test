@@ -6,7 +6,7 @@ import session from "express-session";
 import cors from "cors";
 import InfoRoutes from "./app/Middleware/InfoRoutes.js";
 import "./lib/auth.js";
-import path from "path"
+import path from "path";
 import {
   categoryRouters,
   defRouters,
@@ -22,7 +22,10 @@ const app = express();
 // middleware Start
 app.use(
   cors({
-    origin:( process.env.NODE_ENV === "production") ? "https://windahouseware.vercel.app" : "http://localhost:5173",
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://windahouseware.vercel.app"
+        : "http://localhost:5173",
     credentials: true,
     methods: ["POST", "GET", "DELETE", "PUT", "OPTIONS"],
   }),
@@ -33,10 +36,12 @@ app.use(
   session({
     resave: false,
     saveUninitialized: false,
-    proxy:true,
+    proxy: true,
     secret: process.env.SESSION_SECRET,
-    cookie: { secure: process.env.NODE_ENV === "production" ,
-              sameSite:  (process.env.NODE_ENV === "production") ? "lax" :"none",maxAge: 24 * 60 * 60 * 1000
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "lax" : "none",
+      maxAge: 24 * 60 * 60 * 1000,
     },
   }),
 );
@@ -51,7 +56,8 @@ app.get(
 app.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect:  (process.env.NODE_ENV === "production")? "/": "http://localhost:5173/",
+    successRedirect:
+      process.env.NODE_ENV === "production" ? "/" : "http://localhost:5173/",
   }),
 );
 
@@ -67,11 +73,27 @@ app.use("/api/transaction", transactionRoutes); //transactionRouting
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  // Coba cari folder dist di root project (naik 2 tingkat dari backend/src)
+  let frontendPath = path.resolve(__dirname, "../../frontend/dist");
+
+  // Logika tambahan: Jika path pertama tidak ada, coba naik 1 tingkat (Vercel Flat Structure)
+  if (!fs.existsSync(frontendPath)) {
+    frontendPath = path.resolve(__dirname, "../frontend/dist");
+  }
+
+  app.use(express.static(frontendPath));
+
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+    const indexPath = path.join(frontendPath, "index.html");
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      // Jika masih tidak ketemu, beri pesan error yang jelas di browser
+      res
+        .status(404)
+        .send(`Frontend build not found. Checked at: ${frontendPath}`);
+    }
   });
 }
 if (process.env.NODE_ENV !== "production") {
@@ -84,4 +106,4 @@ if (process.env.NODE_ENV !== "production") {
   // Di production (Vercel), kita cukup pastikan DB terkoneksi
   connectDB();
 }
-export default app
+export default app;
