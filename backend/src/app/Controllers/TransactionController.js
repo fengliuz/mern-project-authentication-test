@@ -11,7 +11,7 @@ export const createTransaction = async (req, res) => {
 
   try {
     const { quantity, type, productId, note, toWarehouseId } = req.body;
-    const warehouseId = req.headers["x-warehouse-id"];
+    const warehouseId = req.headers["x-warehouse-id"] || req.body.warehouseId || req.params.warehouseId;
 
     if (!warehouseId) {
       return res.status(400).json({ message: "Please select a warehouse first!" });
