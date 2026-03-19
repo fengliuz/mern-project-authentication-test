@@ -6,27 +6,38 @@ import session from "express-session";
 import cors from "cors";
 import InfoRoutes from "./app/Middleware/InfoRoutes.js";
 import "./lib/auth.js";
-import { categoryRouters, defRouters, productRoutes, transactionRoutes, userRouters, warehouseRoutes } from "./app/Routes/web.js";
-import { WarehouseVerifier } from "./app/Middleware/WarehouseVerifier.js";
+import path from "path"
+import {
+  categoryRouters,
+  defRouters,
+  productRoutes,
+  transactionRoutes,
+  userRouters,
+  warehouseRoutes,
+} from "./app/Routes/web.js";
+import { fileURLToPath } from "url";
 dotenv.config();
 // app initialization start
 const app = express();
 // middleware Start
-app.use(express.json()); //for reqtrieve body request
-app.use(InfoRoutes); //Info of the api's-hit
 app.use(
   cors({
-    origin:true,
+    origin:( process.env.NODE_ENV === "production") ? "https://windahouseware.vercel.app" : "http://localhost:5173",
     credentials: true,
-    methods: ["POST", "GET", "DELETE", "PUT","OPTIONS"],
+    methods: ["POST", "GET", "DELETE", "PUT", "OPTIONS"],
   }),
 );
+app.use(express.json()); //for reqtrieve body request
+app.use(InfoRoutes); //Info of the api's-hit
 app.use(
   session({
     resave: false,
     saveUninitialized: false,
-    secret: "123",
-    cookie: { secure: false },
+    proxy:true,
+    secret: process.env.SESSION_SECRET,
+    cookie: { secure: process.env.NODE_ENV === "production" ,
+              sameSite:  (process.env.NODE_ENV === "production") ? "lax" :"none",maxAge: 24 * 60 * 60 * 1000
+    },
   }),
 );
 
@@ -40,23 +51,40 @@ app.get(
 app.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/",
-    successRedirect: "http://localhost:5173/",
+    successRedirect:  (process.env.NODE_ENV === "production")? "/": "http://localhost:5173/",
   }),
 );
 
-app.use("/api/auth", userRouters); 
+app.use("/api/auth", userRouters);
 app.use("/api", defRouters); //defRouting
 
-app.use("/api/warehouse",warehouseRoutes) //warehouseRouting
-app.use("/api/category",categoryRouters) //categoryRouting
-app.use("/api/product",productRoutes) //productRouting
-app.use("/api/transaction",transactionRoutes) //transactionRouting
+app.use("/api/warehouse", warehouseRoutes); //warehouseRouting
+app.use("/api/category", categoryRouters); //categoryRouting
+app.use("/api/product", productRoutes); //productRouting
+app.use("/api/transaction", transactionRoutes); //transactionRouting
 
 // middleware End
-// Connecting database and listening app
-connectDB().then(() => {
-  app.listen(process.env.PORT,"0.0.0.0", (req, res) => {
-    console.log("res");
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+if (process.env.NODE_ENV === "production") {
+  // Naik 2 tingkat: dari backend/src/ -> backend/ -> root/ -> frontend/dist
+  const frontendPath = path.resolve(__dirname, "../../frontend/dist");
+  
+  app.use(express.static(frontendPath));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
   });
-});
+}
+if (process.env.NODE_ENV !== "production") {
+  connectDB().then(() => {
+    app.listen(process.env.PORT || 5001, () => {
+      console.log("Server running on local");
+    });
+  });
+} else {
+  // Di production (Vercel), kita cukup pastikan DB terkoneksi
+  connectDB();
+}
