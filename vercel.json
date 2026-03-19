@@ -11,13 +11,11 @@
       "config": { "distDir": "dist" }
     }
   ],
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "backend/src/index.js" },
-    { "source": "/auth/(.*)", "destination": "backend/src/index.js" },
-    { "source": "/google/(.*)", "destination": "backend/src/index.js" },
-    { 
-      "source": "/((?!assets/|static/|favicon.ico|.*\\..*).*)", 
-      "destination": "frontend/index.html" 
-    }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "backend/src/index.js" },
+    { "src": "/auth/(.*)", "dest": "backend/src/index.js" },
+    { "src": "/google/(.*)", "dest": "backend/src/index.js" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "frontend/index.html" }
   ]
 }
