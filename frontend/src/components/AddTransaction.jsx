@@ -31,7 +31,7 @@ const AddTransaction = ({ onSuccess, products }) => {
     try {
       await api.post("/transaction", {
         ...formData,
-        fromWarehouseId: activeWarehouseId, // Gudang asal otomatis
+        warehouseId: activeWarehouseId, // Gudang asal otomatis
       });
       toast.success("Transaction recorded!");
       onSuccess(); // Refresh data di parent
