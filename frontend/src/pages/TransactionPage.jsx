@@ -21,13 +21,6 @@ const TransactionPage = () => {
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const [formData, setFormData] = useState({
-    productId: "",
-    type: "IN", // 'in' atau 'out'
-    quantity: 1,
-    note: "",
-  });
-
   const activeWarehouseId = localStorage.getItem("activeWarehouseId");
   const handleDelete = async (id) => {
     // Gunakan confirm sederhana atau library modal
