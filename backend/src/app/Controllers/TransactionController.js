@@ -22,7 +22,7 @@ export const createTransaction = async (req, res) => {
     if (!warehouse) {
       throw new Error("Invalid Warehouse Id!");
     }
-
+    let targetWarehouse = ""
     // 2. Validasi Produk di Gudang Asal
     const product = await Product.findOne({ _id: productId, warehouseId }).session(session).populate("category","name slug description");
     if (!product) {
@@ -42,6 +42,7 @@ export const createTransaction = async (req, res) => {
     } 
     else if (type === "TRANSFER") {
       // Validasi Owner (Hanya owner gudang yang bisa transfer keluar)
+      targetWarehouse = await Warehouse.findById(toWarehouseId)
       if (req.user.username !== warehouse.owner.username) {
         return res.status(403).json({ message: "Forbidden: Only warehouse owner can transfer items" });
       }
@@ -98,7 +99,6 @@ export const createTransaction = async (req, res) => {
     // 3. Update stok produk asal
     product.stock = currentStock;
     await product.save({ session });
-    const targetWarehouse = await Warehouse.findById(toWarehouseId)
     // 4. Catat Transaksi
     const newTransaction = await Transaction.create([{
       note: note || (type === "TRANSFER" ? `Transfer to ${targetWarehouse.name} from ${warehouse.name}` : ""),
