@@ -26,7 +26,7 @@ const RegisterPage = () => {
   };
   const handleGoogleRegister = (e) => {
     e.preventDefault();
-    window.location.href = "http://localhost:5001/auth/google";
+    window.location.href = "https://windahouseware.vercel.app/auth/google";
   };
   return (
     <div className="flex justify-center items-center  min-h-full">
