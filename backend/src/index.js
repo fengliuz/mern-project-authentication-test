@@ -72,13 +72,9 @@ if (process.env.NODE_ENV === "production") {
   const frontendPath = path.resolve(__dirname, "../../frontend/dist");
   app.use(express.static(frontendPath));
 
-  // MIDDLEWARE SEBAGAI PENGGANTI WILDCARD
-  app.use((req, res, next) => {
-    // Jika request bukan untuk API/Auth, kirim index.html
-    if (!req.path.startsWith('/api') && !req.path.startsWith('/auth') && !req.path.startsWith('/google')) {
-      return res.sendFile(path.join(frontendPath, "index.html"));
-    }
-    next();
+  // Di Express 4, bintang (*) ini aman sentosa
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(frontendPath, "index.html"));
   });
 }
 if (process.env.NODE_ENV !== "production") {
