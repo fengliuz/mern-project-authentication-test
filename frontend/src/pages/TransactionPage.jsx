@@ -45,10 +45,8 @@ const TransactionPage = () => {
     try {
       setLoading(true);
       // Fetch produk untuk dropdown & riwayat transaksi
-      const [prodRes, transRes] = await Promise.all([
-        api.get(`/product?warehouseId=${activeWarehouseId}`),
-        api.get(`/transaction?warehouseId=${activeWarehouseId}`),
-      ]);
+      const prodRes = await api.get(`/product?warehouseId=${activeWarehouseId}`)
+      const transRes = await  api.get(`/transaction?warehouseId=${activeWarehouseId}`)
       setProducts(prodRes.data.data);
       setTransactions(transRes.data.data);
     } catch (error) {
