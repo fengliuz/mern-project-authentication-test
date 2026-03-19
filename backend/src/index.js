@@ -66,19 +66,19 @@ app.use("/api/transaction", transactionRoutes); //transactionRouting
 
 // middleware End
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
-if (process.env.NODE_ENV === "production") {
-  // Naik 2 tingkat: dari backend/src/ -> backend/ -> root/ -> frontend/dist
-  const frontendPath = path.resolve(__dirname, "../../frontend/dist");
+// // if (process.env.NODE_ENV === "production") {
+// //   // Naik 2 tingkat: dari backend/src/ -> backend/ -> root/ -> frontend/dist
+// //   const frontendPath = path.resolve(__dirname, "../../frontend/dist");
   
-  app.use(express.static(frontendPath));
+// //   app.use(express.static(frontendPath));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-  });
-}
+// //   app.get("*", (req, res) => {
+// //     res.sendFile(path.join(frontendPath, "index.html"));
+// //   });
+// // }
 if (process.env.NODE_ENV !== "production") {
   connectDB().then(() => {
     app.listen(process.env.PORT || 5001, () => {
