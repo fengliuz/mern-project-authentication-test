@@ -69,13 +69,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV === "production") {
-  // Naik 2 tingkat: dari backend/src/ -> backend/ -> root/ -> frontend/dist
   const frontendPath = path.resolve(__dirname, "../../frontend/dist");
-  
   app.use(express.static(frontendPath));
 
-  app.get("/^\/(?!api|auth|google).*/", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
+  // MIDDLEWARE SEBAGAI PENGGANTI WILDCARD
+  app.use((req, res, next) => {
+    // Jika request bukan untuk API/Auth, kirim index.html
+    if (!req.path.startsWith('/api') && !req.path.startsWith('/auth') && !req.path.startsWith('/google')) {
+      return res.sendFile(path.join(frontendPath, "index.html"));
+    }
+    next();
   });
 }
 if (process.env.NODE_ENV !== "production") {
