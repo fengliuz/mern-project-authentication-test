@@ -15,6 +15,6 @@
     { "source": "/api/(.*)", "destination": "backend/src/index.js" },
     { "source": "/auth/(.*)", "destination": "backend/src/index.js" },
     { "source": "/google/(.*)", "destination": "backend/src/index.js" },
-    { "source": "/(.*)", "destination": "frontend/$1" }
+    { "source": "/(.*)", "destination": "frontend/index.html" }
   ]
 }
