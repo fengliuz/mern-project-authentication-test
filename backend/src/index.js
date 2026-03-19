@@ -69,12 +69,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.resolve(__dirname, "../../frontend/dist");
-  app.use(express.static(frontendPath));
-
-  // Di Express 4, bintang (*) ini aman sentosa
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(frontendPath, "index.html"));
+    res.sendFile(path.join(__dirname, "../FRONTEND", "dist", "index.html"));
   });
 }
 if (process.env.NODE_ENV !== "production") {
