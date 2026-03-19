@@ -20,6 +20,7 @@ dotenv.config();
 // app initialization start
 const app = express();
 // middleware Start
+app.set("trust proxy",1)
 app.use(
   cors({
     origin:( process.env.NODE_ENV === "production") ? "https://windahouseware.vercel.app" : "http://localhost:5173",
@@ -69,9 +70,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  // Naik 2 tingkat: dari backend/src/ -> backend/ -> root/ -> frontend/dist
+  const frontendPath = path.resolve(__dirname, "../../frontend/dist");
+  
+  app.use(express.static(frontendPath));
+
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+    res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
 if (process.env.NODE_ENV !== "production") {
