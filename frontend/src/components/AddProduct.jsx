@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 const AddProduct = ({ onSuccess, isEdit, id, onClose }) => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -158,7 +159,9 @@ const AddProduct = ({ onSuccess, isEdit, id, onClose }) => {
             Batal
           </button>
           <button type="submit" className="btn btn-primary flex-[2] shadow-lg shadow-primary/20">
-            {isEdit ? "Update Produk" : "Simpan Produk"}
+             {loading ? (
+            <span className="loading loading-spinner"></span>
+          ): isEdit ? "Update Produk" : "Simpan Produk"}
           </button>
         </div>
       </form>

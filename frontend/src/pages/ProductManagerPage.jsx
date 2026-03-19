@@ -41,28 +41,24 @@ const ProductManagerPage = () => {
       setLoading(false);
     }
   };
-  const fetchProductsByCategory = async (categoryId) => {
-    try {
-      if (!categoryId) {
-        fetchProducts();
-        return;
-      }
-      if(categoryId === "nOnEofExiSt"){
-        fetchProducts()
-        return;
-      }
-      setLoading(true);
-      const res = await api.get(
-        `/product/category/${categoryId}?warehouseId=${activeWarehouseId}`,
-      );
-      console.log(res.data.message)
-      setProducts(res.data.data);
-    } catch (error) {
-      toast.error("Gagal memuat produk", error.response.data.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchProductsByCategory = async (categoryId) => {
+  if (!categoryId || categoryId === "nOnEofExiSt") {
+    await fetchProducts();
+    return;
+  }
+
+  try {
+    setLoading(true); // Pastikan ini jalan paling pertama
+    const res = await api.get(
+      `/product/category/${categoryId}?warehouseId=${activeWarehouseId}`
+    );
+    setProducts(res.data.data);
+  } catch (error) {
+    toast.error("Gagal memuat produk");
+  } finally {
+    setLoading(false);
+  }
+};
   const handleDelete = async (id) => {
     try {
       const res = await api.delete(`/product/${id}`);
@@ -186,12 +182,12 @@ const ProductManagerPage = () => {
 
       {/* GRID CARDS: Pengganti Tabel */}
       {loading ? (
-        <div className="flex justify-center p-20">
+        <div className="flex justify-center items-center p-20">
           <span className="loading loading-dots loading-lg text-primary"></span>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredProducts.map((p) => {
+          {filteredProducts?.map((p) => {
             const isLowStock = p.stock <= p.minStock;
             return (
               <div
@@ -287,7 +283,7 @@ const ProductManagerPage = () => {
           })}
 
           {/* Empty State */}
-          {filteredProducts.length === 0 && (
+          {(products.length === 0) && (
             <div className="col-span-full py-20 text-center opacity-20">
               <Info size={48} className="mx-auto mb-2" />
               <p className="font-black italic">NO PRODUCTS FOUND</p>
