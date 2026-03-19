@@ -74,7 +74,7 @@ if (process.env.NODE_ENV === "production") {
   
   app.use(express.static(frontendPath));
 
-  app.get("/:anything*", (req, res) => {
+  app.get("/:anything(*)", (req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
