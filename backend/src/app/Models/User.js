@@ -27,7 +27,6 @@ const userSchema = new mongoose.Schema(
         return !this.googleId;
       },
       trim: true,
-      minlength: [6, "Password minimal length is 6 characters"],
     },
     avatar: {
       type: String,

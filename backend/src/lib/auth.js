@@ -11,12 +11,21 @@ passport.use(new GoogleStrategy({
         try {
             let user = await User.findOne({googleId:profile.id})
             if(!user){
+                user = await User.findOne({ email: profile.emails[0].value.toLowerCase() });
+                if (user) {
+                // Link akun manual dengan Google ID agar kedepannya bisa login Google
+                user.googleId = profile.id;
+                user.avatar = user.avatar || profile.photos[0].value;
+                await user.save();
+            }else{
+
                 user = await User.create({
                     username:profile.given_name || profile.displayName,
                     googleId:profile.id,
                     email:profile.emails[0].value,
                     avatar:profile.photos[0].value
                 })
+            }
             }
              return cb(null,user)
         } catch (error) {
